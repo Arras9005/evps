@@ -36,13 +36,13 @@ describe('本机网页服务', () => {
 
   before(async () => {
     // 端口要先知道才能做 Host 校验：先占一个空闲端口再关掉，用它建服务
-    const probe = createHttpServer({ token, port: 0, webDir: web, version: '0.2.0', jobs: new Jobs({ store, vpsScript: '' }), store, promo: { providers: [], reasons: [], tips: [] }, onQuit: () => undefined });
+    const probe = createHttpServer({ token, port: 0, webDir: web, version: '0.2.0', jobs: new Jobs({ store, vpsScript: '' }), store, promo: { providers: [], intro: '', highlights: [], reasons: [], tips: [] }, onQuit: () => undefined });
     await new Promise<void>((r) => probe.listen(0, '127.0.0.1', r));
     const port = (probe.address() as AddressInfo).port;
     await new Promise((r) => probe.close(r));
     server = createHttpServer({
       token, port, webDir: web, version: '0.2.0', jobs: new Jobs({ store, vpsScript: '' }), store,
-      promo: { providers: [], reasons: [], tips: [] }, onQuit: () => undefined, update: Promise.resolve('0.3.0'),
+      promo: { providers: [], intro: '', highlights: [], reasons: [], tips: [] }, onQuit: () => undefined, update: Promise.resolve('0.3.0'),
     });
     await new Promise<void>((r) => server.listen(port, '127.0.0.1', r));
     base = `http://127.0.0.1:${port}`;

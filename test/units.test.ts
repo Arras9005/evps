@@ -68,4 +68,9 @@ describe('其他', () => {
     assert.deepEqual(p.tips, ['x']);
     assert.deepEqual(p.reasons, [reason, '没有之一']);
   });
+  it('推荐页的卖点：缺字段的丢掉，不认识的图标换成对勾', () => {
+    const p = parsePromo({ intro: '只是个人推荐', highlights: [{ icon: 'tag', title: '便宜', desc: '很便宜' }, { icon: 'evil', title: '快', desc: '很快' }, { title: '没说明' }] });
+    assert.equal(p.intro, '只是个人推荐');
+    assert.deepEqual(p.highlights, [{ icon: 'tag', title: '便宜', desc: '很便宜' }, { icon: 'check', title: '快', desc: '很快' }]);
+  });
 });

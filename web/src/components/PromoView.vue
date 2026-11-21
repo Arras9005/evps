@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { Info, Provider } from '../types.ts';
+import AppIcon from './AppIcon.vue';
 
-defineProps<{ promo: Info['promo'] }>();
+const props = defineProps<{ promo: Info['promo'] }>();
+const sentences = computed(() => props.promo.intro.split(/(?<=[。！？])/).map((t) => t.trim()).filter(Boolean));
 const emit = defineEmits<{ bought: [] }>();
 
 function open(p: Provider): void {
@@ -10,28 +13,42 @@ function open(p: Provider): void {
 </script>
 
 <template>
-  <section class="page">
-    <h1 class="title">先买一台 VPS</h1>
-    <div class="card promo">
-      <div v-for="p in promo.providers" :key="p.name" class="prov">
+  <section class="page promo-page">
+    <span class="soft-badge">个人推荐</span>
+    <h1 class="title">推荐一家好用的 VPS</h1>
+    <!-- 一句一行：「只是个人推荐」和「用其他家也可以」各占一行，读着清楚 -->
+    <p v-if="promo.intro" class="lead sm intro"><span v-for="(t, i) in sentences" :key="i">{{ t }}</span></p>
+
+    <div v-for="p in promo.providers" :key="p.name" class="card promo">
+      <div class="prov">
         <span class="prov-logo">{{ p.name.slice(0, 1) }}</span>
         <div class="grow">
           <div class="prov-name">{{ p.name }}</div>
           <div v-if="p.note" class="hint">{{ p.note }}</div>
         </div>
-        <button type="button" class="btn primary" data-test="buy" @click="open(p)">去购买 ↗</button>
       </div>
-      <template v-if="promo.reasons.length">
-        <h2 class="sec">为什么推荐</h2>
-        <ol class="nice">
-          <li v-for="r in promo.reasons" :key="r">{{ r }}</li>
-        </ol>
-      </template>
-      <h2 class="sec">购买时注意</h2>
-      <ol class="nice">
-        <li v-for="t in promo.tips" :key="t">{{ t }}</li>
+
+      <ul v-if="promo.highlights.length" class="highlights">
+        <li v-for="h in promo.highlights" :key="h.title">
+          <span class="hl-ic"><AppIcon :name="h.icon" /></span>
+          <b>{{ h.title }}</b>
+          <span>{{ h.desc }}</span>
+        </li>
+      </ul>
+      <ol v-else-if="promo.reasons.length" class="nice">
+        <li v-for="r in promo.reasons" :key="r">{{ r }}</li>
       </ol>
+
+      <template v-if="promo.tips.length">
+        <h2 class="sec">购买时注意</h2>
+        <ul class="tips-plain">
+          <li v-for="t in promo.tips" :key="t"><AppIcon name="check" />{{ t }}</li>
+        </ul>
+      </template>
+
+      <button type="button" class="btn primary xl block" data-test="buy" @click="open(p)">去{{ p.name }}看看 ↗</button>
     </div>
-    <button type="button" class="btn ghost xl center-block wide-btn" data-test="bought" @click="emit('bought')">买好了，开始安装 →</button>
+
+    <button type="button" class="linkbtn center-block" data-test="bought" @click="emit('bought')">买好了，或者已经有服务器？开始安装 →</button>
   </section>
 </template>

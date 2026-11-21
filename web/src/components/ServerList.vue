@@ -13,8 +13,8 @@ export interface ListedServer {
   remembered: boolean;
 }
 
-const props = defineProps<{ servers: ListedServer[] }>();
-const emit = defineEmits<{ open: [server: ListedServer]; add: [] }>();
+const props = defineProps<{ servers: ListedServer[]; hasPromo: boolean }>();
+const emit = defineEmits<{ open: [server: ListedServer]; add: []; need: [] }>();
 
 onMounted(() => {
   for (const s of props.servers) checkIfStale(s.key, s.conn);
@@ -46,5 +46,12 @@ function sub(s: ListedServer): string {
         </button>
       </li>
     </ul>
+
+    <!-- 个人推荐：放在列表下面，不抢眼，想再买一台的时候看得到 -->
+    <button v-if="hasPromo" type="button" class="promo-tip" data-test="need" @click="emit('need')">
+      <span class="soft-badge">个人推荐</span>
+      <span class="grow">想再买一台？看看我推荐的 VPS</span>
+      <AppIcon name="chevron" class="rot" />
+    </button>
   </section>
 </template>

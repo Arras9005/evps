@@ -46,7 +46,7 @@
 h1 { font-size: 40px; line-height: 1.25; font-weight: 800; letter-spacing: -0.5px; text-align: center; }
 .title { font-size: 28px; line-height: 1.35; font-weight: 750; letter-spacing: -0.2px; }
 .title-left { font-size: 30px; text-align: left; }
-.lead { font-size: 19px; color: var(--text-2); text-align: center; margin-top: 12px; }
+.lead { font-size: 19px; color: var(--text-2); text-align: center; margin-top: 12px; text-wrap: balance; }
 .lead.sm { font-size: 17px; margin-top: 10px; }
 .hint { font-size: 14.5px; color: var(--text-2); line-height: 1.6; }
 .hint.center { text-align: center; }
@@ -233,15 +233,35 @@ h1 { font-size: 40px; line-height: 1.25; font-weight: 800; letter-spacing: -0.5p
 .quiet-links { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
 .dot-sep { color: var(--text-3); }
 
-/* ---------- 购买 ---------- */
+/* ---------- 推荐 ---------- */
+.promo-page { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.promo-page .card { width: 100%; text-align: left; }
+.soft-badge { display: inline-flex; align-items: center; height: 26px; padding: 0 11px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-text); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; flex: none; }
+.promo-page > .soft-badge { margin-bottom: 12px; }
+.promo-page .lead { max-width: 520px; }
+.intro span { display: block; }
+.promo { display: flex; flex-direction: column; gap: 22px; }
 .prov { display: flex; align-items: center; gap: 16px; }
-.prov + .prov { margin-top: 16px; }
-.prov-logo { width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #0ea5e9, #6366f1); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 20px; flex: none; }
-.prov-name { font-size: 19px; font-weight: 700; }
-.sec { font-size: 14.5px; font-weight: 700; color: var(--text-3); letter-spacing: 1px; margin: 26px 0 12px; }
+.prov-logo { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #0ea5e9, #6366f1); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 22px; flex: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25); }
+.prov-name { font-size: 21px; font-weight: 750; }
+.highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.highlights li { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 16px; background: var(--sunken); border: 1px solid var(--line); }
+.highlights b { font-size: 16.5px; margin-top: 6px; }
+.highlights li > span:last-child { font-size: 14px; color: var(--text-2); line-height: 1.6; text-wrap: pretty; }
+.hl-ic { width: 36px; height: 36px; border-radius: 11px; background: var(--brand-soft); color: var(--brand-text); display: grid; place-items: center; }
+.hl-ic .icon { width: 19px; height: 19px; }
+.sec { font-size: 14.5px; font-weight: 700; color: var(--text-3); letter-spacing: 1px; margin: 0 0 -10px; }
+.tips-plain { display: flex; flex-direction: column; gap: 8px; font-size: 15.5px; }
+.tips-plain li { display: flex; gap: 10px; align-items: flex-start; line-height: 1.65; }
+.tips-plain .icon { width: 17px; height: 17px; color: var(--ok); margin-top: 4px; stroke-width: 2; }
 .nice { counter-reset: n; }
 .nice li { counter-increment: n; display: flex; gap: 12px; font-size: 16.5px; line-height: 1.7; margin-bottom: 10px; }
 .nice li::before { content: counter(n); width: 24px; height: 24px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-text); display: grid; place-items: center; font-size: 14px; font-weight: 700; flex: none; margin-top: 3px; }
+
+/* 「我的服务器」下面的推荐条 */
+.promo-tip { width: 100%; display: flex; align-items: center; gap: 12px; margin-top: 20px; padding: 16px 20px; border-radius: 16px; border: 1px dashed var(--line-strong); background: transparent; color: var(--text-2); font-size: 15.5px; text-align: left; transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease; }
+.promo-tip:hover { background: var(--surface); border-color: var(--brand); color: var(--text); }
+.promo-tip .icon { width: 16px; height: 16px; color: var(--text-3); }
 
 /* ---------- 退出、出错 ---------- */
 .center-page { text-align: center; padding-top: 80px; }
@@ -294,6 +314,10 @@ h1 { font-size: 40px; line-height: 1.25; font-weight: 800; letter-spacing: -0.5p
   .btn-row .grow2 { flex-basis: 100%; }
   .btn.xl { padding: 0 18px; }
   .srv { padding: 14px 16px; gap: 12px; }
+  .highlights { grid-template-columns: 1fr; }
+  .highlights li { flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 12px; }
+  .highlights b { margin-top: 0; }
+  .highlights li > span:last-child { flex-basis: 100%; padding-left: 48px; margin-top: -6px; }
   .detail-host { font-size: 22px; }
   .detail-head { flex-wrap: wrap; }
   .stepsbar { gap: 6px; font-size: 13.5px; }

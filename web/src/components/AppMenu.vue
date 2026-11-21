@@ -2,8 +2,8 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import AppIcon from './AppIcon.vue';
 
-defineProps<{ version: string; disabled: boolean }>();
-const emit = defineEmits<{ quit: [cleanup: boolean] }>();
+defineProps<{ version: string; disabled: boolean; hasPromo: boolean }>();
+const emit = defineEmits<{ quit: [cleanup: boolean]; promo: [] }>();
 const open = ref(false);
 const root = ref<HTMLElement | null>(null);
 
@@ -30,6 +30,7 @@ function github(): void {
   <div ref="root" class="menu-wrap">
     <button type="button" class="icon-btn" :class="{ on: open }" aria-label="更多" :aria-expanded="open" data-test="menu" @click="open = !open"><AppIcon name="more" /></button>
     <div v-if="open" class="menu" role="menu">
+      <button v-if="hasPromo" type="button" role="menuitem" data-test="menu-promo" :disabled="disabled" @click="open = false; emit('promo')">VPS 推荐</button>
       <button type="button" role="menuitem" data-test="quit" :disabled="disabled" @click="pick(false)">退出 evps</button>
       <button type="button" role="menuitem" class="danger" data-test="cleanup" :disabled="disabled" @click="pick(true)">清理本机文件并退出</button>
       <div class="menu-sep" />

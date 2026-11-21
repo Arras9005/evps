@@ -46,6 +46,7 @@ export interface JobView {
 export interface SavedServer { id: string; host: string; port: number; user: string; fingerprint: string; addedAt: string }
 
 export interface Provider { name: string; url: string; note: string }
-export interface Info { version: string; promo: { providers: Provider[]; reasons: string[]; tips: string[] }; platform: string }
+export interface Highlight { icon: string; title: string; desc: string }
+export interface Info { version: string; promo: { providers: Provider[]; intro: string; highlights: Highlight[]; reasons: string[]; tips: string[] }; platform: string }
 
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; status: number; error: { code: string; message: string } };

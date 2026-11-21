@@ -141,6 +141,7 @@ try {
   await b.click('[data-test=home]');
   await b.waitFor(`document.querySelector('[data-test=server-row]')`);
   await shot('07-首页-我的服务器');
+  assert.ok(await b.eval(`!!document.querySelector('[data-test=need]')`), '有了服务器以后，列表下面也要有「看看我推荐的 VPS」');
   await b.click('[data-test=server-row]');
   await b.waitFor(`document.querySelector('[data-test=status]')`);
   await b.click('[data-test=status]');
