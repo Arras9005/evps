@@ -47,7 +47,7 @@
     "build": "npm run build:server && npm run build:web",
     "start": "node dist/server/main.js",
     "verify": "npm run typecheck && npm test && npm run build",
-    "prepublishOnly": "npm run verify"
+    "prepublishOnly": "node dev/prepublish.mjs"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
