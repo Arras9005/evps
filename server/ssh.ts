@@ -1,9 +1,9 @@
 /**
  * 所有 SSH 操作都在这里，用纯 JS 的 ssh2，不依赖电脑上的 ssh 命令。
- * 借鉴自 envBuilder/install-panel 的 ssh.ts。区别：
+ * 说明：
  * - 主机密钥：第一次连接时记下（不要求用户手工核对指纹），记住的服务器之后每次都必须一致；
  * - 接受常见的主机密钥类型（不只 ed25519），普通 VPS 都能连；
- * - 多了 runPty：要一个终端执行命令，边看输出边回答（官方安装脚本要求在终端里交互）。
+ * - runPty：要一个终端执行命令，边看输出边回答（官方安装脚本要求在终端里交互）。
  */
 import { createHash, timingSafeEqual } from 'node:crypto';
 import ssh2 from 'ssh2';

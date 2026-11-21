@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
  * evps 入口：生成本次运行的令牌，只监听 127.0.0.1，打开浏览器。
- * 借鉴自 envBuilder/install-panel 的 main.ts。
  */
 import { randomBytes } from 'node:crypto';
 import { spawn } from 'node:child_process';
@@ -93,7 +92,7 @@ process.stdout.write(
   `如果浏览器没有自动打开，请复制下面这个地址到浏览器里打开：\n  ${url}\n\n` +
   '用完之前请不要关闭这个窗口。关掉它，网页就用不了了（服务器上已经装好的面板不受影响）。\n',
 );
-if (!process.argv.includes('--no-open')) openBrowser(url);
+if (!process.argv.includes('--no-open') && process.env.EVPS_NO_OPEN !== '1') openBrowser(url);
 
 setInterval(() => {
   if (!jobs.running() && Date.now() - lastActivity > IDLE_EXIT_MS) {

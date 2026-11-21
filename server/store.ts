@@ -1,5 +1,5 @@
 /**
- * 本机数据：记住的服务器和 evps 专用的 SSH 密钥。不保存密码。借鉴自 envBuilder/install-panel 的 store.ts。
+ * 本机数据：记住的服务器和 evps 专用的 SSH 密钥。不保存密码。
  * 位置：Windows 是 %LOCALAPPDATA%\evps，其他系统是 ~/.evps。启动脚本下载的便携 Node 和 npm 缓存也在这里，
  * 所以「清理本机文件」删掉这一个目录就干净了。
  */
@@ -49,7 +49,7 @@ function isEntry(value: unknown): value is ServerEntry {
 
 /**
  * 生成 ed25519 密钥，并立刻用 ssh2 自己解析一遍。
- * ssh2 生成的密钥偶尔自己都解析不了（install-panel 实测十几分之一），解析不了就重新生成。
+ * ssh2 生成的密钥偶尔自己都解析不了（实测约十几分之一），解析不了就重新生成。
  */
 export function generateUsableKeyPair(
   generate: () => { private: string; public: string } = () => ssh2.utils.generateKeyPairSync('ed25519', { comment: KEY_COMMENT }),

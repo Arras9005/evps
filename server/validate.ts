@@ -1,4 +1,4 @@
-/** 输入校验。所有来自页面的值都先过这里。主机地址规则借鉴自 envBuilder/install-panel，加了 IPv6。 */
+/** 输入校验。所有来自页面的值都先过这里。主机地址只收 IPv4、IPv6 和域名，不收任何 shell 符号。 */
 import { randomInt } from 'node:crypto';
 import { isIPv6 } from 'node:net';
 

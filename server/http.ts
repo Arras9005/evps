@@ -1,6 +1,6 @@
 /**
  * 本机网页服务：只监听 127.0.0.1。接口要令牌，改动类请求还要核对来源。
- * 借鉴自 envBuilder/install-panel 的 http.ts（Host 校验防 DNS 重绑定、令牌、内容安全策略）。
+ * Host 校验防 DNS 重绑定；接口要令牌；页面有内容安全策略。
  */
 import { timingSafeEqual } from 'node:crypto';
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';

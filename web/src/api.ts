@@ -1,6 +1,5 @@
 /**
  * 令牌：从启动链接的 # 后面读出来，立刻把地址栏清掉；在当前标签页的 sessionStorage 里留一份，刷新页面不用重新进。
- * 借鉴自 envBuilder/install-panel 的 api.ts。
  */
 import type { ApiResult } from './types.ts';
 

@@ -1,5 +1,5 @@
 /**
- * 假的 SSH 服务器（用 ssh2 自带的服务端实现），给测试和本机预览用。借鉴自 envBuilder/install-panel/dev/fake-ssh-server.mjs。
+ * 假的 SSH 服务器（用 ssh2 自带的服务端实现），给测试和本机预览用。
  * - 密码登录、公钥登录；装公钥 / 撤销公钥两条命令在内存里模拟，不碰本机的 ~/.ssh；
  * - 别的命令在本机真的执行：用 unshare -r 假装 root，HOME 指到一个临时目录；
  *   要终端的命令（evps 跑 vps.sh 时）用 util-linux 的 script 给它一个真的终端。
