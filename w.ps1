@@ -33,7 +33,11 @@ function Start-Evps {
   $sysNode = Get-Command node.exe -ErrorAction SilentlyContinue
   if ($sysNode -and -not $env:EVPS_FORCE_PORTABLE) {
     try {
-      $major = [int](& $sysNode.Source -p 'process.versions.node.split(".")[0]')
+      # 用 node -v 看版本。不要用 node -p "...split('.')..."：
+      # Windows PowerShell 5.1 调用外部程序时会吃掉参数里的双引号，Node 会报 SyntaxError。
+      $major = 0
+      $verLine = & $sysNode.Source -v
+      if ("$verLine" -match '(\d+)\.') { $major = [int]$Matches[1] }
       $cli = Join-Path (Split-Path $sysNode.Source) 'node_modules\npm\bin\npx-cli.js'
       if ($major -ge 18 -and (Test-Path $cli)) {
         $nodeExe = $sysNode.Source
