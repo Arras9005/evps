@@ -139,9 +139,11 @@ export function createFakeVps(variant = 'normal') {
   const vpsScript = real
     .replace('NODE_HOME=/usr/local/geto', `NODE_HOME=${nodeHome}`)
     .replace('INSTALL_URL=https://www.geto.im/panel/install.sh', `INSTALL_URL=file://${installPath}`)
+    // 真的脚本只许 HTTPS；假服务器用本地文件代替官方脚本，这里放开 file://
+    .replace(`--proto '=https' --proto-redir '=https'`, `--proto '=https,file' --proto-redir '=https'`)
     .replaceAll('/usr/local/bin/geto', join(bin, 'geto'))
     .replace('export PATH="/usr/local/sbin:', `export PATH="${bin}:/usr/local/sbin:`);
-  for (const needle of [`NODE_HOME=${nodeHome}`, `INSTALL_URL=file://`, `export PATH="${bin}:`]) {
+  for (const needle of [`NODE_HOME=${nodeHome}`, `INSTALL_URL=file://`, `--proto '=https,file'`, `export PATH="${bin}:`]) {
     if (!vpsScript.includes(needle)) throw new Error('vps.sh 的结构变了，假环境替换失败：' + needle);
   }
   return {

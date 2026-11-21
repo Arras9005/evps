@@ -1,7 +1,7 @@
 # evps 启动脚本（Windows 10 / 11）。按 Win+R，输入 powershell 回车，在蓝色窗口里粘贴 README 里的那一行命令。
 #
 # 它做的事：
-# 1. 电脑上有 Node.js 18 以上，就直接用；
+# 1. 电脑上有 Node.js 20 以上，就直接用；
 # 2. 没有，就下载 Node.js 官方的便携版到 %LOCALAPPDATA%\evps\node（核对 SHA256；不装进系统、不改系统设置、不要管理员权限）；
 # 3. 用 npx 运行 evps（不运行任何第三方安装脚本），浏览器会自动打开。
 # 用完点网页上的「清理本机文件」，%LOCALAPPDATA%\evps 整个删掉，电脑上不留东西。
@@ -39,7 +39,7 @@ function Start-Evps {
       $verLine = & $sysNode.Source -v
       if ("$verLine" -match '(\d+)\.') { $major = [int]$Matches[1] }
       $cli = Join-Path (Split-Path $sysNode.Source) 'node_modules\npm\bin\npx-cli.js'
-      if ($major -ge 18 -and (Test-Path $cli)) {
+      if ($major -ge 20 -and (Test-Path $cli)) {
         $nodeExe = $sysNode.Source
         $npxCli = $cli
         Say ("已找到 Node.js " + (& $nodeExe -v) + "，直接使用。")

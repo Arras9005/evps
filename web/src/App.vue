@@ -34,6 +34,8 @@ const fatal = ref<string | null>(hasToken ? null : '这个网页需要从黑窗�
 const quitting = ref(false);
 const quitDone = ref<string | null>(null);
 const installing = ref(false);
+/** npm 上有新版本（只有用 npm i -g 装的才会查） */
+const update = ref<string | null>(null);
 let ping: ReturnType<typeof setInterval> | undefined;
 
 const freshDraft = (): Draft => ({ host: '', port: '22', user: 'root', password: '', remember: true, error: null });
@@ -60,6 +62,7 @@ onMounted(async () => {
   }
   info.value = r.data;
   await loadServers();
+  void api<{ latest: string | null }>('/api/update').then((u) => { if (u.ok) update.value = u.data.latest; });
   // 告诉 evps 网页还开着；网页关掉一段时间后它会自己退出
   ping = setInterval(() => { void api('/api/ping', { method: 'POST', body: {} }); }, 60_000);
 });
@@ -165,6 +168,10 @@ const backText = computed(() => (route.value.name === 'server' ? '我的服务�
       <span class="grow" />
       <AppMenu v-if="info && !quitDone" :version="info.version" :disabled="quitting || installing" @quit="quit" />
     </header>
+
+    <div v-if="update && !quitDone" class="update-bar" data-test="update">
+      <b>有新版本 {{ update }}</b>（你现在用的是 {{ info?.version }}）。更新方法：关掉 evps，在黑窗口运行 <code>npm i -g @zhangbo9005/easy-vps@latest</code>，再运行 <code>evps</code>。
+    </div>
 
     <main class="main">
       <section v-if="quitDone" class="page center-page">

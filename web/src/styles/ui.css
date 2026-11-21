@@ -21,6 +21,11 @@
 .back:hover { color: var(--text); }
 .back .icon { width: 16px; height: 16px; }
 
+/* 新版本提示 */
+.update-bar { max-width: 720px; margin: 0 auto 12px; padding: 12px 18px; border-radius: 14px; background: var(--brand-soft); color: var(--text); font-size: 15px; line-height: 1.7; text-align: center; }
+.update-bar code { white-space: nowrap; font-family: var(--mono); font-size: 14px; background: var(--surface); padding: 2px 6px; border-radius: 6px; user-select: all; }
+@media (max-width: 640px) { .update-bar { margin: 0 16px 12px; } }
+
 /* ---------- 文字 ---------- */
 h1 { font-size: 40px; line-height: 1.25; font-weight: 800; letter-spacing: -0.5px; text-align: center; }
 .title { font-size: 28px; line-height: 1.35; font-weight: 750; letter-spacing: -0.2px; }

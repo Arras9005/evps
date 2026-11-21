@@ -6,8 +6,6 @@
 
 <p align="center"><img src="docs/images/installed.png" width="720" alt="装好后：面板地址、用户名、密码一目了然，一键打开面板"></p>
 
-> 当前状态：测试阶段，还没有发布到 npm。下面的一行命令要等发布之后才能用。
-
 ---
 
 ## 为什么用 evps
@@ -75,7 +73,7 @@ evps 把这些都做成了按钮。「记住这台服务器」默认勾上，以
 
 - 一台 VPS，系统是 **Ubuntu、Debian 或 CentOS 系**都可以，建议 1G 内存以上。
 - 它的 **IP 地址、SSH 端口（一般是 22）和 root 密码**，在服务商后台都能看到。
-- 还没有 VPS？打开 evps 后点首页的「我还没有 VPS」，有购买指引。
+- 还没有 VPS？打开 evps 后点首页的「还没有服务器？看看推荐」，有购买指引。
 
 ### 第一步：打开黑窗口，粘贴一行命令
 
@@ -93,7 +91,18 @@ evps 把这些都做成了按钮。「记住这台服务器」默认勾上，以
 
 第一次运行会自动准备运行环境，要等一会儿。之后**浏览器会自动打开** evps 的网页。黑窗口要一直开着，用完再关。
 
-> 电脑上已经装了 Node.js 18 以上，也可以直接运行 `npx @zhangbo9005/easy-vps`。
+#### 已经装了 Node.js（20 以上）？也可以用 npm
+
+```sh
+npm i -g @zhangbo9005/easy-vps   # 装一次
+evps                             # 以后每次用，运行这一个词就行
+```
+
+不想装，也可以直接 `npx @zhangbo9005/easy-vps`。
+
+> **Windows 的 PowerShell 提示「因为在此系统上禁止运行脚本」**：这是 Windows 默认不让运行 `.ps1`，npm 生成的 `evps.ps1`、`npx.ps1` 都会被拦。不用改系统设置，在命令后面加 `.cmd` 就行：`evps.cmd`、`npx.cmd @zhangbo9005/easy-vps`。或者改用「命令提示符」（`Win + R` 输入 `cmd`）运行。上面那一行 PowerShell 命令不受这个限制。
+>
+> 用 npm 装的不会自己更新。有新版本时，evps 网页顶部会提示，按提示运行 `npm i -g @zhangbo9005/easy-vps@latest` 就行。一行命令启动的每次都是最新版。
 
 ### 第二步：点「开始安装」
 
@@ -180,6 +189,9 @@ evps 把这些都做成了按钮。「记住这台服务器」默认勾上，以
 - SSH 密码只在内存里，用来登录这一次，不写入任何文件，日志里也会被遮住。
 - 安装时只认官方脚本「依次问端口、用户名、密码」这一种问法，变了就停下。
 - 便携 Node.js 下载后核对官方公布的 SHA256，对不上就删除，不会执行。
+- 发布的 npm 包**没有任何依赖**：SSH 库（ssh2）在发布时就打包进去了，装的时候只下载这一个包，不会在你的电脑上运行任何安装脚本或编译程序。打包进去的开源代码的许可证在 `dist/server/THIRD-PARTY-LICENSES.txt`。
+- VPS 上下载官方安装脚本只走 HTTPS，跳转也不许降到 HTTP。
+- 用 npm 装的 evps 启动时会问一下 npm 有没有新版本（一个公开的 GET 请求，不带任何信息）。不想让它问，设环境变量 `EVPS_NO_UPDATE_CHECK=1`。
 
 ## 关于购买推荐
 
@@ -191,7 +203,7 @@ evps 把这些都做成了按钮。「记住这台服务器」默认勾上，以
 
 ## 从源码启动
 
-需要 Node.js 22.12 以上（推荐 22 或 24 的长期支持版）和 git。Windows、Mac、Linux 都可以。
+需要 Node.js 22.12 以上（推荐 22 或 24 的长期支持版）和 git。发布出去的包只要 Node.js 20 以上。Windows、Mac、Linux 都可以。
 
 ### 方式一：编译后运行（和用户拿到的完全一样）
 
@@ -199,7 +211,7 @@ evps 把这些都做成了按钮。「记住这台服务器」默认勾上，以
 git clone https://github.com/Arras9005/evps.git
 cd evps
 npm ci             # 装依赖（.npmrc 里关掉了第三方安装脚本）
-npm run build      # 编译后端到 dist/server，打包网页到 dist/web
+npm run build      # 后端连同 ssh2 打成一个文件 dist/server/main.js，网页打包到 dist/web
 npm start          # 启动，浏览器自动打开
 ```
 

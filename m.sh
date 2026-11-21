@@ -3,7 +3,7 @@
 #   curl -fsSL https://registry.npmmirror.com/@zhangbo9005/easy-vps/latest/files/m.sh | sh
 #
 # 它做的事：
-# 1. 电脑上有 Node.js 18 以上，就直接用；
+# 1. 电脑上有 Node.js 20 以上，就直接用；
 # 2. 没有，就下载 Node.js 官方的便携版到 ~/.evps/node（核对 SHA256；不装进系统、不改系统设置、不要管理员密码）；
 # 3. 用 npx 运行 evps（不运行任何第三方安装脚本），浏览器会自动打开。
 # 用完点网页上的「清理本机文件」，~/.evps 整个删掉，电脑上不留东西。
@@ -28,7 +28,7 @@ main() {
   NODE_BIN=""
   if command -v node >/dev/null 2>&1 && command -v npx >/dev/null 2>&1 && [ -z "${EVPS_FORCE_PORTABLE:-}" ]; then
     major=$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)
-    if [ "${major:-0}" -ge 18 ] 2>/dev/null; then
+    if [ "${major:-0}" -ge 20 ] 2>/dev/null; then
       NODE_BIN="$(dirname "$(command -v node)")"
       say "已找到 Node.js $(node -v)，直接使用。"
     fi

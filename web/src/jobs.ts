@@ -49,6 +49,21 @@ export interface ServerState {
 const states = reactive<Record<string, ServerState>>({});
 const inflight = new Map<string, Promise<void>>();
 
+/** 同时最多查几台：记住的服务器多时，不一下子开一堆 SSH 连接 */
+const MAX_PARALLEL = 3;
+let active = 0;
+const waiting: (() => void)[] = [];
+async function slot<T>(work: () => Promise<T>): Promise<T> {
+  if (active >= MAX_PARALLEL) await new Promise<void>((ok) => waiting.push(ok));
+  active += 1;
+  try {
+    return await work();
+  } finally {
+    active -= 1;
+    waiting.shift()?.();
+  }
+}
+
 export function serverState(key: string): ServerState {
   if (!states[key]) states[key] = { checking: false, result: null, error: null, lines: [], checkedAt: 0 };
   return states[key] as ServerState;
@@ -66,7 +81,7 @@ export function checkStatus(key: string, conn: Conn): Promise<void> {
   s.checking = true;
   const p = (async () => {
     const lines: string[] = [];
-    const job = await runJob('status', conn, (_j, more) => { lines.push(...more); });
+    const job = await slot(() => runJob('status', conn, (_j, more) => { lines.push(...more); }));
     s.lines = lines;
     if (isFailure(job)) {
       s.error = job;

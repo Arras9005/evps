@@ -159,9 +159,10 @@ do_install() {
   inst="$work/install.sh"
   say "正在下载官方安装脚本 $INSTALL_URL"
   if command -v curl >/dev/null 2>&1; then
-    curl -fsSL --retry 2 --max-time 60 -o "$inst" "$INSTALL_URL" </dev/null
+    # 只走 HTTPS（跳转也不许降到 HTTP），防止下载被中途篡改
+    curl -fsSL --proto '=https' --proto-redir '=https' --retry 2 --max-time 60 -o "$inst" "$INSTALL_URL" </dev/null
   else
-    wget -q -T 60 -O "$inst" "$INSTALL_URL" </dev/null
+    wget -q --https-only -T 60 -O "$inst" "$INSTALL_URL" </dev/null
   fi
   if [ ! -s "$inst" ]; then
     rm -rf "$work"

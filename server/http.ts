@@ -23,6 +23,8 @@ export interface HttpOptions {
   onQuit: (cleanup: boolean) => void;
   /** 每次收到页面的请求时调用（用来判断页面还开着没有） */
   onActivity?: () => void;
+  /** npm 上有更新的版本时给出版本号（启动时开始查，查不到是 null） */
+  update?: Promise<string | null>;
 }
 
 const MAX_BODY = 16 * 1024;
@@ -91,17 +93,32 @@ async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> 
   }
 }
 
+/** 网页文件读一次就放在内存里（一共几百 KB），不用每次读盘 */
+const fileCache = new Map<string, Buffer>();
+
 function serveStatic(webDir: string, urlPath: string, res: ServerResponse): void {
-  const rel = urlPath === '/' ? 'index.html' : decodeURIComponent(urlPath.replace(/^\/+/, ''));
+  let rel: string;
+  try {
+    rel = urlPath === '/' ? 'index.html' : decodeURIComponent(urlPath.replace(/^\/+/, ''));
+  } catch {
+    rel = '';
+  }
   const full = normalize(join(webDir, rel));
   const type = TYPES[extname(full)];
-  if (!type || !full.startsWith(webDir + sep) || !existsSync(full) || !statSync(full).isFile()) {
+  let body = fileCache.get(full);
+  if (!body && type && full.startsWith(webDir + sep) && !rel.includes('\0') && existsSync(full) && statSync(full).isFile()) {
+    body = readFileSync(full);
+    fileCache.set(full, body);
+  }
+  if (!type || !body) {
     res.writeHead(404, headers({ 'content-type': 'text/plain; charset=utf-8' }));
     res.end('Not found');
     return;
   }
-  res.writeHead(200, headers({ 'content-type': type }));
-  res.end(readFileSync(full));
+  // assets/ 里的文件名带内容指纹，内容变了名字就变，可以放心让浏览器一直缓存；index.html 每次都要新的
+  const immutable = rel.startsWith('assets/');
+  res.writeHead(200, headers({ 'content-type': type, ...(immutable ? { 'cache-control': 'private, max-age=31536000, immutable' } : {}) }));
+  res.end(body);
 }
 
 function optionalString(v: unknown): string | undefined {
@@ -152,6 +169,10 @@ export function createHttpServer(opts: HttpOptions): Server {
     const path = url.pathname;
     if (method === 'GET' && path === '/api/info') {
       send(res, 200, { version: opts.version, promo: opts.promo, platform: process.platform });
+      return;
+    }
+    if (method === 'GET' && path === '/api/update') {
+      send(res, 200, { latest: (await opts.update) ?? null, current: opts.version });
       return;
     }
     if (method === 'GET' && path === '/api/servers') {

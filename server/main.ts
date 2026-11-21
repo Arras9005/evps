@@ -11,6 +11,7 @@ import { Jobs } from './jobs.ts';
 import { packageVersion, rootFile } from './paths.ts';
 import { loadPromo } from './promo.ts';
 import { Store } from './store.ts';
+import { checkUpdate } from './update.ts';
 
 /** 页面关掉（不再发心跳）这么久，又没有操作在跑，就自己退出 */
 const IDLE_EXIT_MS = 15 * 60_000;
@@ -50,6 +51,8 @@ const jobs = new Jobs({ store });
 const promo = loadPromo();
 const version = packageVersion();
 let lastActivity = Date.now();
+// 一行命令启动的每次都是最新版，不用查；EVPS_NO_UPDATE_CHECK=1 也可以关掉
+const update = process.env.EVPS_BOOTSTRAP === '1' || process.env.EVPS_NO_UPDATE_CHECK === '1' ? Promise.resolve(null) : checkUpdate(version);
 
 let stopping = false;
 function quit(cleanup: boolean): void {
@@ -69,11 +72,11 @@ function quit(cleanup: boolean): void {
 // 端口要先确定才能创建带 Host 校验的服务，所以逐个试
 let port = wanted;
 const make = (p: number) => createHttpServer({
-  token, port: p, webDir: rootFile('dist', 'web'), version, jobs, store, promo, onQuit: quit, onActivity: () => { lastActivity = Date.now(); },
+  token, port: p, webDir: rootFile('dist', 'web'), version, jobs, store, promo, update, onQuit: quit, onActivity: () => { lastActivity = Date.now(); },
 });
 let server = make(port);
 for (; port < wanted + 30; port += 1) {
-  server = make(port);
+  if (port !== wanted) server = make(port);
   const ok = await new Promise<boolean>((resolve) => {
     server.once('error', () => resolve(false));
     server.listen(port, '127.0.0.1', () => resolve(true));

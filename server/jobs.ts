@@ -123,10 +123,11 @@ export function tcpProbe(host: string, port: number, timeoutMs = 5000): Promise<
   });
 }
 
-async function probeRepeatedly(probe: (h: string, p: number) => Promise<boolean>, host: string, port: number): Promise<boolean> {
-  for (let i = 0; i < 4; i += 1) {
+/** 刚装好时面板可能还在启动，多试几次；查看状态时面板早就在跑了，试两次就够（端口被挡时每次要等满超时，试多了很慢） */
+async function probeRepeatedly(probe: (h: string, p: number) => Promise<boolean>, host: string, port: number, tries = 4): Promise<boolean> {
+  for (let i = 0; i < tries; i += 1) {
     if (await probe(host, port)) return true;
-    await new Promise((r) => setTimeout(r, 1500));
+    if (i < tries - 1) await new Promise((r) => setTimeout(r, 1500));
   }
   return false;
 }
@@ -411,7 +412,7 @@ export class Jobs {
         const status = parseStatus(lines);
         const result: JobResult = { ...base, kind: status.installed ? 'status' : 'not-installed', status: withLabels(status), panel: status };
         const port = Number(/:(\d+)\/?$/.exec(status.address ?? '')?.[1] ?? NaN);
-        if (status.installed && Number.isInteger(port) && !status.stopped) result.reach = { ok: await probeRepeatedly(this.probe, job.target.host, port), port };
+        if (status.installed && Number.isInteger(port) && !status.stopped) result.reach = { ok: await probeRepeatedly(this.probe, job.target.host, port, 2), port };
         job.result = result;
         break;
       }
