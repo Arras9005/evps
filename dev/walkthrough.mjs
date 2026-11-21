@@ -37,17 +37,23 @@ const port = 6899;
 const server = createHttpServer({ token, port, webDir: rootFile('dist', 'web'), version: '0.1.0', jobs, store, promo, onQuit: () => undefined });
 await new Promise((r) => server.listen(port, '127.0.0.1', r));
 
-const b = await launch({ width: 1280, height: 900 });
+// EVPS_WALK_SIZE=1366x657 这样可以换窗口大小（看小屏幕上会不会出滚动条）
+const [walkW, walkH] = (process.env.EVPS_WALK_SIZE ?? '1280x900').split('x').map(Number);
+const b = await launch({ width: walkW, height: walkH });
 if (!b) {
   console.log('找不到 Chrome，跳过（设 CHROME_BIN）');
   process.exit(0);
 }
 const shots = [];
+/** 每张截图时页面有多高：比窗口高就会出滚动条 */
+const heights = [];
 const shot = async (name, full = true) => {
   const path = join(out, name + '.png');
   // 整页截图：先回到顶部（不然吸顶的标题栏会出现在页面中间），再等进场动画结束
   if (full) await b.eval('window.scrollTo(0, 0)');
   await b.sleep(450);
+  const [docH, winH] = JSON.parse(await b.eval('JSON.stringify([document.documentElement.scrollHeight, window.innerHeight])'));
+  heights.push(`${docH > winH ? '有滚动条' : '没有    '}  页面 ${docH} / 窗口 ${winH}  ${name}`);
   await b.shot(path, { full });
   shots.push(path);
 };
@@ -186,6 +192,7 @@ try {
 
   assert.deepEqual(b.errors, [], '页面不应该有报错');
   console.log('走查通过，截图：\n' + shots.join('\n'));
+  console.log('\n页面高度：\n' + heights.join('\n'));
 } finally {
   await b.close();
   server.close();

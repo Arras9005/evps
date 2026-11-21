@@ -290,6 +290,8 @@ npm test           # 单元测试 + 假 SSH 服务器上的完整流程（安装
 npm run verify     # 类型检查 + 测试 + 构建
 # 界面走查和截图（第二个目录给了就顺便生成 README 配图）
 CHROME_BIN=/path/to/chrome node --experimental-strip-types dev/walkthrough.mjs /tmp/evps-walk docs/images
+# 换个窗口大小再走一遍，最后会列出每个画面有没有滚动条
+EVPS_WALK_SIZE=1366x657 CHROME_BIN=/path/to/chrome node --experimental-strip-types dev/walkthrough.mjs /tmp/evps-walk-small
 ```
 
 ### 目录结构

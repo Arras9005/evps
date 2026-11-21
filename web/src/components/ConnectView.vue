@@ -74,20 +74,22 @@ async function submit(): Promise<void> {
 
     <!-- 不用 <form>：浏览器看到表单提交会弹「要保存密码吗」 -->
     <div class="card form" @input="d.error = null" @keydown.enter="onEnter">
-      <label class="field">
-        <span class="field-label">服务器 IP</span>
-        <input ref="hostInput" v-model="d.host" v-bind="noFill" class="input" data-test="host" placeholder="例如 203.0.113.7" @blur="onHostBlur" />
-      </label>
-
-      <label class="field">
-        <span class="field-label">{{ d.user && d.user !== 'root' ? `${d.user} 的密码` : 'root 密码' }}</span>
-        <SecretInput v-model="d.password" test-id="password" placeholder="买服务器时服务商给的密码" />
-      </label>
-
-      <div class="field-row">
+      <!-- 两行排：左边是必填的 IP、密码，右边是一般不用改的端口、用户名。一屏放得下，不用滚动 -->
+      <div class="field-row main-side">
+        <label class="field">
+          <span class="field-label">服务器 IP</span>
+          <input ref="hostInput" v-model="d.host" v-bind="noFill" class="input" data-test="host" placeholder="例如 203.0.113.7" @blur="onHostBlur" />
+        </label>
         <label class="field">
           <span class="field-label">SSH 端口</span>
           <input v-model="d.port" v-bind="noFill" class="input" data-test="port" inputmode="numeric" />
+        </label>
+      </div>
+
+      <div class="field-row main-side">
+        <label class="field">
+          <span class="field-label">{{ d.user && d.user !== 'root' ? `${d.user} 的密码` : 'root 密码' }}</span>
+          <SecretInput v-model="d.password" test-id="password" placeholder="服务商给的密码" />
         </label>
         <label class="field">
           <span class="field-label">SSH 用户名</span>

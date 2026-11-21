@@ -13,9 +13,8 @@ function open(p: Provider): void {
 </script>
 
 <template>
-  <section class="page promo-page">
-    <span class="soft-badge">个人推荐</span>
-    <h1 class="title">推荐一家好用的 VPS</h1>
+  <section class="page wide promo-page">
+    <h1 class="title promo-title"><span class="soft-badge">个人推荐</span>推荐一家好用的 VPS</h1>
     <!-- 一句一行：「只是个人推荐」和「用其他家也可以」各占一行，读着清楚 -->
     <p v-if="promo.intro" class="lead sm intro"><span v-for="(t, i) in sentences" :key="i">{{ t }}</span></p>
 
@@ -26,6 +25,7 @@ function open(p: Provider): void {
           <div class="prov-name">{{ p.name }}</div>
           <div v-if="p.note" class="hint">{{ p.note }}</div>
         </div>
+        <button type="button" class="btn primary" data-test="buy" @click="open(p)">去看看 ↗</button>
       </div>
 
       <ul v-if="promo.highlights.length" class="highlights">
@@ -46,7 +46,6 @@ function open(p: Provider): void {
         </ul>
       </template>
 
-      <button type="button" class="btn primary xl block" data-test="buy" @click="open(p)">去{{ p.name }}看看 ↗</button>
     </div>
 
     <button type="button" class="linkbtn center-block" data-test="bought" @click="emit('bought')">买好了，或者已经有服务器？开始安装 →</button>

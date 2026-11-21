@@ -207,7 +207,7 @@ const backText = computed(() => (route.value.name === 'server' ? '我的服务�
             <p class="lead sm">{{ fatal }}</p>
           </section>
           <template v-else-if="info">
-            <div v-if="showBack" class="back-row"><button type="button" class="back" data-test="back" @click="go({ name: 'home' })"><AppIcon name="chevron" class="rot-back" />{{ backText }}</button></div>
+            <div v-if="showBack" class="back-row" :class="{ wide: route.name === 'promo' }"><button type="button" class="back" data-test="back" @click="go({ name: 'home' })"><AppIcon name="chevron" class="rot-back" />{{ backText }}</button></div>
             <ServerList v-if="route.name === 'home' && servers.length" :servers="servers" :has-promo="hasPromo" @open="(s) => go({ name: 'server', key: s.key })" @add="startNew" @need="go({ name: 'promo' })" />
             <WelcomeView v-else-if="route.name === 'home'" :has-promo="hasPromo" @start="startNew" @need="go({ name: 'promo' })" />
             <PromoView v-else-if="route.name === 'promo'" :promo="info.promo" @bought="startNew" />
