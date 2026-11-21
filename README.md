@@ -82,13 +82,13 @@ evps 把这些都做成了按钮。勾选「记住这台服务器」以后，连
 **Windows 10 / 11**：按键盘上的 `Win + R`，输入 `powershell`，回车。在打开的蓝色窗口里粘贴下面这一行，回车：
 
 ```powershell
-[Net.ServicePointManager]::SecurityProtocol=3072;$s=$null;foreach($u in 'https://registry.npmmirror.com/evps/latest/files/w.ps1','https://cdn.jsdelivr.net/npm/evps@latest/w.ps1'){try{$s=[Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData($u));break}catch{}};iex $s
+[Net.ServicePointManager]::SecurityProtocol=3072;$s=$null;foreach($u in 'https://registry.npmmirror.com/evps/latest/files/w.ps1','https://cdn.jsdelivr.net/npm/evps@latest/w.ps1'){try{$s=[Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData($u));break}catch{}};if($s){iex $s}else{Write-Host '下载 evps 启动脚本失败，请检查网络后重试' -ForegroundColor Red}
 ```
 
 **Mac**：按 `Command + 空格`，输入「终端」，回车。粘贴下面这一行，回车：
 
 ```sh
-(curl -fsSL https://registry.npmmirror.com/evps/latest/files/m.sh || curl -fsSL https://cdn.jsdelivr.net/npm/evps@latest/m.sh) | sh
+(curl -fsSL https://registry.npmmirror.com/evps/latest/files/m.sh || curl -fsSL https://cdn.jsdelivr.net/npm/evps@latest/m.sh || echo "echo '下载 evps 启动脚本失败，请检查网络后重试'") | sh
 ```
 
 第一次运行会自动准备运行环境，要等一会儿。之后**浏览器会自动打开** evps 的网页。黑窗口要一直开着，用完再关。
