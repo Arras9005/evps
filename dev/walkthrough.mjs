@@ -98,7 +98,7 @@ try {
     await setValue('[data-test=host]', '');
     await setValue('[data-test=password]', '');
   }
-  // 粘贴 root@IP:端口 这种写法，自动拆开，端口不是 22 时自动展开「高级」
+  // 粘贴 root@IP:端口 这种写法，自动拆开
   await b.type('[data-test=host]', `root@127.0.0.1:${fake.port}`);
   await b.click('[data-test=password]');
   assert.equal(await b.eval(`document.querySelector('[data-test=host]').value`), '127.0.0.1');

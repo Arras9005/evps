@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { splitTarget } from '../api.ts';
 import AppIcon from './AppIcon.vue';
 import StepsBar from './StepsBar.vue';
@@ -19,10 +19,7 @@ const emit = defineEmits<{ submit: [] }>();
 
 const d = props.draft;
 const showPassword = ref(false);
-const advanced = ref(d.port !== '22' || d.user !== 'root');
 const hostInput = ref<HTMLInputElement | null>(null);
-
-const advSummary = computed(() => `SSH 端口 ${d.port || '22'} · 用户名 ${d.user || 'root'}`);
 
 /** 粘贴 root@1.2.3.4:2222 这类写法时，自动拆到三个框里 */
 function onHostBlur(): void {
@@ -30,7 +27,6 @@ function onHostBlur(): void {
   d.host = t.host;
   if (t.port !== null) d.port = String(t.port);
   if (t.user !== null) d.user = t.user;
-  if (d.port !== '22' || d.user !== 'root') advanced.value = true;
 }
 
 function validate(): string | null {
@@ -77,7 +73,7 @@ async function submit(): Promise<void> {
         </span>
       </label>
 
-      <div v-show="advanced" class="field-row">
+      <div class="field-row">
         <label class="field">
           <span class="field-label">SSH 端口</span>
           <input v-model="d.port" class="input" data-test="port" inputmode="numeric" autocomplete="off" />
@@ -101,7 +97,6 @@ async function submit(): Promise<void> {
       <div v-if="d.error" class="tip bad" role="alert" data-test="form-error"><span class="tip-ic">!</span><div>{{ d.error }}</div></div>
 
       <button type="submit" class="btn primary xl block" data-test="install">连接并安装</button>
-      <button v-if="!advanced" type="button" class="linkbtn quiet center-block" data-test="advanced" @click="advanced = true">高级：{{ advSummary }} <AppIcon name="chevron" /></button>
     </form>
     <p class="safe"><AppIcon name="shield" />密码只在这台电脑上用来登录，不保存、不上传</p>
   </section>
