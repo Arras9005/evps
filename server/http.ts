@@ -33,6 +33,7 @@ const TYPES: Readonly<Record<string, string>> = {
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
   '.png': 'image/png',
+  '.webp': 'image/webp',
 };
 
 const STATUS: Readonly<Record<string, number>> = {

@@ -1,21 +1,26 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
+import { answerConfirm, useConfirm } from '../composables/useConfirm.ts';
 
-defineProps<{ title: string; body: string[]; ok: string; danger: boolean }>();
-const emit = defineEmits<{ ok: []; cancel: [] }>();
+const state = useConfirm();
 const dlg = ref<HTMLDialogElement | null>(null);
-onMounted(() => dlg.value?.showModal());
+
+watch(() => state.current, async (c) => {
+  await nextTick();
+  if (c && dlg.value && !dlg.value.open) dlg.value.showModal();
+  if (!c && dlg.value?.open) dlg.value.close();
+});
 </script>
 
 <template>
-  <dialog ref="dlg" class="dlg narrow" data-test="confirm" @cancel.prevent="emit('cancel')">
-    <div class="dlg-head"><div class="titles"><h2>{{ title }}</h2></div></div>
-    <div class="dlg-body">
-      <p v-for="t in body" :key="t">{{ t }}</p>
-    </div>
-    <div class="dlg-foot">
-      <button type="button" class="btn" @click="emit('cancel')">取消</button>
-      <button type="button" class="btn" :class="danger ? 'danger solid' : 'primary'" data-test="confirm-ok" @click="emit('ok')">{{ ok }}</button>
-    </div>
+  <dialog ref="dlg" class="dlg" data-test="confirm" @cancel.prevent="answerConfirm(false)">
+    <template v-if="state.current">
+      <h2>{{ state.current.title }}</h2>
+      <p v-for="t in state.current.body" :key="t">{{ t }}</p>
+      <div class="dlg-foot">
+        <button type="button" class="btn ghost" @click="answerConfirm(false)">取消</button>
+        <button type="button" class="btn" :class="state.current.danger ? 'danger' : 'primary'" data-test="confirm-ok" @click="answerConfirm(true)">{{ state.current.ok }}</button>
+      </div>
+    </template>
   </dialog>
 </template>

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { Info, Provider } from '../types.ts';
-import AppIcon from './AppIcon.vue';
 
 defineProps<{ promo: Info['promo'] }>();
-const emit = defineEmits<{ back: []; bought: [] }>();
+const emit = defineEmits<{ bought: [] }>();
 
 function open(p: Provider): void {
   window.open(p.url, '_blank', 'noopener,noreferrer');
@@ -11,29 +10,29 @@ function open(p: Provider): void {
 </script>
 
 <template>
-  <button type="button" class="btn text back" @click="emit('back')"><AppIcon name="chevron" class="rot-back" />返回</button>
-  <section class="card">
-    <h2>买一台 VPS</h2>
-    <p class="muted">购买页面已经在新标签页打开。没打开的话，点下面的按钮。</p>
-    <div class="providers">
-      <div v-for="p in promo.providers" :key="p.name" class="provider">
+  <section class="page">
+    <h1 class="title">先买一台 VPS</h1>
+    <p class="lead sm">几分钟就能买好，买完回到这里继续</p>
+    <div class="card promo">
+      <div v-for="p in promo.providers" :key="p.name" class="prov">
+        <span class="prov-logo">{{ p.name.slice(0, 1) }}</span>
         <div class="grow">
-          <b>{{ p.name }}</b>
-          <p v-if="p.note" class="muted small">{{ p.note }}</p>
+          <div class="prov-name">{{ p.name }}</div>
+          <div v-if="p.note" class="hint">{{ p.note }}</div>
         </div>
-        <button type="button" class="btn primary" @click="open(p)">去购买 <AppIcon name="external" /></button>
+        <button type="button" class="btn primary" data-test="buy" @click="open(p)">去购买 ↗</button>
       </div>
+      <template v-if="promo.reasons.length">
+        <h2 class="sec">为什么推荐</h2>
+        <ol class="nice">
+          <li v-for="r in promo.reasons" :key="r">{{ r }}</li>
+        </ol>
+      </template>
+      <h2 class="sec">购买时注意</h2>
+      <ol class="nice">
+        <li v-for="t in promo.tips" :key="t">{{ t }}</li>
+      </ol>
     </div>
-    <h3 v-if="promo.reasons.length">我的推荐理由</h3>
-    <ol v-if="promo.reasons.length" class="tips">
-      <li v-for="r in promo.reasons" :key="r">{{ r }}</li>
-    </ol>
-    <h3>购买时注意</h3>
-    <ol class="tips">
-      <li v-for="t in promo.tips" :key="t">{{ t }}</li>
-    </ol>
-    <div class="row-end">
-      <button type="button" class="btn primary" data-test="bought" @click="emit('bought')">我已经买好了，开始安装 <AppIcon name="chevron" class="rot" /></button>
-    </div>
+    <button type="button" class="btn ghost xl center-block wide-btn" data-test="bought" @click="emit('bought')">买好了，开始安装 →</button>
   </section>
 </template>

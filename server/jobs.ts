@@ -366,7 +366,7 @@ export class Jobs {
       if (seen.has(key)) throw new PanelError(key, FAILURES[key] as string);
     }
     if (code === null) {
-      throw new PanelError('DISCONNECTED', '和服务器的连接断开了，操作可能没做完。稍后点「查看状态」看看。');
+      throw new PanelError('DISCONNECTED', '和服务器的连接断开了，操作可能没做完。稍后在 evps 里刷新一下状态看看。');
     }
     return { lines: all, code };
   }

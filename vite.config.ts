@@ -13,6 +13,8 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     cssCodeSplit: false,
+    // 页面的内容安全策略不允许 data: 图片，图片一律打包成单独的文件
+    assetsInlineLimit: 0,
     rollupOptions: {
       output: { entryFileNames: 'assets/[name]-[hash].js', assetFileNames: 'assets/[name]-[hash][extname]' },
     },
