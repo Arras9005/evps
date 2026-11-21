@@ -189,18 +189,49 @@ evps 把这些都做成了按钮。勾选「记住这台服务器」以后，连
 
 ---
 
-## 开发
+## 从源码启动
 
-需要 Node.js 22.6 以上（直接运行 TypeScript 源码）。测试和界面走查需要 Linux（用 `unshare` 和 `script` 模拟 VPS）。
+需要 Node.js 22.12 以上（推荐 22 或 24 的长期支持版）和 git。Windows、Mac、Linux 都可以。
+
+### 方式一：编译后运行（和用户拿到的完全一样）
 
 ```sh
-npm install
-npm test           # 单元测试 + 假 SSH 服务器上的完整流程（安装、状态、停止、启动、卸载）
+git clone https://github.com/Arras9005/evps.git
+cd evps
+npm ci             # 装依赖（.npmrc 里关掉了第三方安装脚本）
 npm run build      # 编译后端到 dist/server，打包网页到 dist/web
-npm start          # 运行
+npm start          # 启动，浏览器自动打开
+```
+
+- 不想自动打开浏览器：`npm start -- --no-open`，再把黑窗口里打印的链接复制到浏览器（链接 `#t=` 后面是本次的令牌，少了它页面用不了）。
+- 换端口：`npm start -- --port 7000`（默认 6790，被占用会自动顺延）。
+- 本机数据默认在 `~/.evps`（Windows 是 `%LOCALAPPDATA%\evps`），可以用环境变量 `EVPS_HOME` 换到别的目录。
+
+### 方式二：开发模式（改网页时自动刷新）
+
+开两个终端：
+
+```sh
+npm run dev:server   # 终端 1：直接运行 TypeScript 源码的后端，监听 6790，会打印带令牌的链接
+npm run dev:web      # 终端 2：网页开发服务器，监听 5174，接口转给 6790
+```
+
+浏览器打开 `http://localhost:5174/#t=令牌`，令牌就是终端 1 链接里 `#t=` 后面那一串。
+改网页（`web/`）保存后自动刷新；改后端（`server/`、`remote/`）要在终端 1 按 Ctrl+C 再重新运行。
+6790 被别的程序占着时，后端会换到 6791，网页开发服务器就连不上它，先把占用的程序关掉。
+
+### 测试
+
+测试和界面走查需要 Linux（用 `unshare` 和 `script` 模拟 VPS）。
+
+```sh
+npm test           # 单元测试 + 假 SSH 服务器上的完整流程（安装、状态、停止、启动、卸载）
+npm run verify     # 类型检查 + 测试 + 构建，发布前会自动跑
 # 界面走查和截图（第二个目录给了就顺便生成 README 配图）
 CHROME_BIN=/path/to/chrome node --experimental-strip-types dev/walkthrough.mjs /tmp/evps-walk docs/images
 ```
+
+### 目录
 
 ```
 server/     本机程序：网页服务（只听 127.0.0.1）、SSH、五个操作

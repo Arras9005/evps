@@ -87,12 +87,13 @@ if (!server.listening) {
 
 // 令牌放在链接的 # 后面：不会发给服务器，页面读到后马上从地址栏清掉
 const url = `http://127.0.0.1:${port}/#t=${token}`;
+const willOpen = !process.argv.includes('--no-open') && process.env.EVPS_NO_OPEN !== '1';
 process.stdout.write(
-  `\nevps ${version} 已启动，正在打开浏览器。\n` +
+  `\nevps ${version} 已启动${willOpen ? '，正在打开浏览器' : ''}。\n` +
   `如果浏览器没有自动打开，请复制下面这个地址到浏览器里打开：\n  ${url}\n\n` +
   '用完之前请不要关闭这个窗口。关掉它，网页就用不了了（服务器上已经装好的面板不受影响）。\n',
 );
-if (!process.argv.includes('--no-open') && process.env.EVPS_NO_OPEN !== '1') openBrowser(url);
+if (willOpen) openBrowser(url);
 
 setInterval(() => {
   if (!jobs.running() && Date.now() - lastActivity > IDLE_EXIT_MS) {
