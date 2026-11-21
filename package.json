@@ -1,0 +1,35 @@
+{
+  "name": "evps",
+  "version": "0.1.0",
+  "description": "在自己电脑的浏览器里，给自己的 VPS 一键安装 Geto 面板，并能查看、停止、重启、卸载。SSH 密码只在你自己的电脑上使用。",
+  "keywords": ["vps", "ssh", "installer", "panel"],
+  "license": "MIT",
+  "type": "module",
+  "bin": { "evps": "dist/server/main.js" },
+  "files": ["dist", "remote", "promo.json", "w.ps1", "m.sh", "README.md", "LICENSE"],
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev:server": "node --experimental-strip-types server/main.ts",
+    "dev:web": "vite",
+    "typecheck": "vue-tsc --noEmit && tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "build:server": "tsc -p tsconfig.server.json",
+    "build:web": "vite build",
+    "build": "npm run build:server && npm run build:web",
+    "start": "node dist/server/main.js",
+    "verify": "npm run typecheck && npm test && npm run build",
+    "prepublishOnly": "npm run verify"
+  },
+  "dependencies": {
+    "ssh2": "1.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/ssh2": "1.15.6",
+    "@vitejs/plugin-vue": "6.0.10",
+    "typescript": "6.0.3",
+    "vite": "8.3.6",
+    "vue": "3.5.45",
+    "vue-tsc": "3.3.14"
+  }
+}

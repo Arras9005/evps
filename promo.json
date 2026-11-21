@@ -1,0 +1,15 @@
+{
+  "providers": [
+    {
+      "name": "千宿网络",
+      "url": "https://www.qsu.hk/aff/TBWHSPLV",
+      "note": "海外 VPS，有香港、美国、日本等多个地区可选"
+    }
+  ],
+  "tips": [
+    "系统选 Ubuntu 22.04 或 Debian 12（CentOS 也可以）",
+    "内存 1G 以上就够用",
+    "买好后，在服务商后台找到服务器的 IP、SSH 端口（一般是 22）和 root 密码",
+    "回到这里点「我已经有 VPS」，把这几项填进去"
+  ]
+}
