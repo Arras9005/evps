@@ -34,6 +34,7 @@ function github(): void {
       <button type="button" role="menuitem" class="danger" data-test="cleanup" :disabled="disabled" @click="pick(true)">清理本机文件并退出</button>
       <div class="menu-sep" />
       <button type="button" role="menuitem" class="menu-meta" @click="github">版本 {{ version }} · GitHub ↗</button>
+      <p class="menu-note">开源免费，非 Geto 面板官方工具</p>
     </div>
   </div>
 </template>

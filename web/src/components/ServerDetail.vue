@@ -94,6 +94,13 @@ async function forget(): Promise<void> {
   else actionError.value = r.error;
 }
 
+/** IP 下面的小字：只在不是默认设置时才写 */
+const detailLine = computed(() => [
+  props.user !== 'root' ? `用户 ${props.user}` : '',
+  props.port !== 22 ? `SSH 端口 ${props.port}` : '',
+  props.remembered ? '' : '没记住，关掉网页就忘',
+].filter(Boolean).join(' · '));
+
 function unitText(active: string): string {
   return active === 'active' ? '运行中' : active === 'failed' ? '出错了' : '已停止';
 }
@@ -104,7 +111,7 @@ function unitText(active: string): string {
     <div class="detail-head">
       <div class="grow">
         <h1 class="detail-host">{{ host }}</h1>
-        <p class="hint">{{ user }} · SSH 端口 {{ port }} · {{ remembered ? '已记住' : '没记住，关掉网页就忘' }}</p>
+        <p v-if="detailLine" class="hint">{{ detailLine }}</p>
       </div>
       <StatusPill :health="health" big />
     </div>
@@ -134,7 +141,6 @@ function unitText(active: string): string {
       <template v-else-if="health === 'not-installed'">
         <div class="empty">
           <p class="empty-title">这台服务器上还没有装面板</p>
-          <p class="hint">点下面的按钮，几分钟就能装好。</p>
         </div>
         <button type="button" class="btn primary xl block" data-test="install" @click="emit('install', conn)">安装面板</button>
       </template>
@@ -142,7 +148,7 @@ function unitText(active: string): string {
       <!-- 装了 -->
       <template v-else>
         <CredCard v-if="panel" :panel="panel" :reach="result?.reach" />
-        <div v-if="units.length" class="units">
+        <div v-if="health === 'partial'" class="units">
           <span v-for="u in units" :key="u.name" class="unit" :class="u.active === 'active' ? 'ok' : u.active === 'failed' ? 'bad' : 'idle'">{{ labels[u.name] ?? u.name }}：{{ unitText(u.active) }}</span>
         </div>
         <div class="btn-row">

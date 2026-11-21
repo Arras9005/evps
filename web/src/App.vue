@@ -186,7 +186,7 @@ const backText = computed(() => (route.value.name === 'server' ? '我的服务�
       <template v-else-if="info">
         <div v-if="showBack" class="back-row"><button type="button" class="back" data-test="back" @click="go({ name: 'home' })"><AppIcon name="chevron" class="rot-back" />{{ backText }}</button></div>
         <Transition name="page" mode="out-in">
-          <ServerList v-if="route.name === 'home' && servers.length" :servers="servers" :has-promo="hasPromo" @open="(s) => go({ name: 'server', key: s.key })" @add="startNew" @need="go({ name: 'promo' })" />
+          <ServerList v-if="route.name === 'home' && servers.length" :servers="servers" @open="(s) => go({ name: 'server', key: s.key })" @add="startNew" />
           <WelcomeView v-else-if="route.name === 'home'" :has-promo="hasPromo" @start="startNew" @need="go({ name: 'promo' })" />
           <PromoView v-else-if="route.name === 'promo'" :promo="info.promo" @bought="startNew" />
           <ConnectView v-else-if="route.name === 'connect'" :draft="draft" @submit="submitDraft" />
@@ -217,7 +217,6 @@ const backText = computed(() => (route.value.name === 'server' ? '我的服务�
       </template>
     </main>
 
-    <footer v-if="info && !quitDone" class="foot">evps 是开源的非官方工具，和面板作者无关 · SSH 密码只在你这台电脑上使用，不会上传</footer>
   </div>
   <ConfirmDialog />
   <ToastHost />

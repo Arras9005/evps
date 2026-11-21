@@ -47,7 +47,6 @@ const steps = computed(() => job.value?.steps ?? []);
 const doneCount = computed(() => steps.value.filter((s) => s.state === 'done' || s.state === 'warn').length);
 const total = computed(() => steps.value.length || 9);
 const current = computed(() => steps.value.find((s) => s.state === 'running') ?? null);
-const upcoming = computed(() => steps.value.filter((s) => s.state === 'pending').map((s) => s.label.replace(/（较慢）$/, '')));
 const finished = computed(() => job.value?.state === 'ok' && job.value.result !== null);
 const result = computed(() => job.value?.result ?? null);
 
@@ -73,16 +72,14 @@ function openPanel(): void {
     <StepsBar :at="3" />
     <img class="done-art" :src="done" alt="" width="140" height="140" />
     <h1 class="title">{{ result.kind === 'already' ? '这台服务器已经装过面板' : '面板装好了' }}</h1>
-    <p class="lead sm">{{ result.kind === 'already' ? '没有重装。下面是现在的登录信息。' : '把下面三项保存好，以后在 evps 里也随时能再看' }}</p>
+    <p class="lead sm">{{ result.kind === 'already' ? '没有重装。下面是现在的登录信息。' : '请保存好下面的登录信息' }}</p>
     <div class="stack">
       <CredCard v-if="result.panel" ref="cred" :panel="result.panel" :reach="result.reach" />
-      <p v-if="result.reach?.ok" class="hint center">已从你的电脑测试过，面板端口能连上。协议在面板网页里创建。</p>
       <div class="btn-row">
         <button type="button" class="btn primary xl grow2" data-test="open-panel" :disabled="!result.panel?.address" @click="openPanel">打开面板 ↗</button>
         <button type="button" class="btn ghost xl grow1" data-test="copy-all" @click="cred?.copyAll()">复制全部</button>
       </div>
       <button type="button" class="linkbtn center-block" data-test="manage" @click="emit('manage')">管理这台服务器 →</button>
-      <LogBox :lines="lines" />
     </div>
   </section>
 
@@ -102,13 +99,7 @@ function openPanel(): void {
     <h1 class="title headline" data-test="job-state" :class="{ busy: !failure }">{{ headline }}</h1>
 
     <template v-if="!failure">
-      <p class="lead sm">一般要 3 到 10 分钟，可以先去忙别的。请不要关闭这个网页和黑窗口。</p>
-      <ul class="mini-steps">
-        <li v-for="s in steps.filter((x) => x.state !== 'pending')" :key="s.id" :class="s.state">
-          <span class="mini-dot">{{ s.state === 'done' ? '✓' : s.state === 'warn' ? '!' : '' }}</span>{{ s.label }}
-        </li>
-        <li v-if="upcoming.length" class="pending"><span class="mini-dot" />接下来：{{ upcoming[0] }}{{ upcoming.length > 1 ? `（之后还有 ${upcoming.length - 1} 步）` : '' }}</li>
-      </ul>
+      <p class="lead sm">大约 3～10 分钟，请不要关闭这个网页和黑窗口</p>
       <LogBox :lines="lines" />
     </template>
 

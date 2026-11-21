@@ -48,8 +48,7 @@ defineExpose({ copyAll });
   <div v-if="reach && !reach.ok" class="tip warn" data-test="reach-warn">
     <span class="tip-ic">!</span>
     <div>
-      <b>从你的电脑打不开面板（TCP 端口 {{ reach.port }} 连不上）。</b>
-      服务器自己的防火墙已经自动放行了，多半是服务商后台的「安全组 / 防火墙」挡住了。请到服务商后台放行 <b>TCP {{ reach.port }}</b>（或者放行全部端口），再点「打开面板」。
+      <b>从你的电脑打不开面板。</b>多半是服务商后台的「安全组」挡住了，放行 <b>TCP {{ reach.port }}</b> 后再点「打开面板」。
     </div>
   </div>
 </template>

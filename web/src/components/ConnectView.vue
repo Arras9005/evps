@@ -62,7 +62,6 @@ async function submit(): Promise<void> {
       <label class="field">
         <span class="field-label">服务器 IP</span>
         <input ref="hostInput" v-model="d.host" class="input" data-test="host" autocomplete="off" spellcheck="false" placeholder="例如 203.0.113.7" @blur="onHostBlur" />
-        <small class="hint">直接粘贴 root@IP:端口 也行</small>
       </label>
 
       <label class="field">
@@ -77,27 +76,22 @@ async function submit(): Promise<void> {
         <label class="field">
           <span class="field-label">SSH 端口</span>
           <input v-model="d.port" class="input" data-test="port" inputmode="numeric" autocomplete="off" />
-          <small class="hint">不知道就填 22</small>
         </label>
         <label class="field">
           <span class="field-label">SSH 用户名</span>
           <input v-model="d.user" class="input" data-test="user" autocomplete="off" spellcheck="false" />
-          <small class="hint">一般是 root</small>
         </label>
       </div>
 
       <label class="check">
         <input v-model="d.remember" type="checkbox" data-test="remember" />
-        <span>
-          记住这台服务器，下次不用再输密码
-          <small class="hint">会在服务器上放一把 evps 专用的登录公钥，卸载面板时自动删掉</small>
-        </span>
+        <span>记住这台服务器，下次不用再输密码</span>
       </label>
 
       <div v-if="d.error" class="tip bad" role="alert" data-test="form-error"><span class="tip-ic">!</span><div>{{ d.error }}</div></div>
 
       <button type="submit" class="btn primary xl block" data-test="install">连接并安装</button>
     </form>
-    <p class="safe"><AppIcon name="shield" />密码只在这台电脑上用来登录，不保存、不上传</p>
+    <p class="safe"><AppIcon name="shield" />密码只在这台电脑上使用，不保存、不上传</p>
   </section>
 </template>

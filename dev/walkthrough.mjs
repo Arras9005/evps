@@ -55,7 +55,7 @@ const text = () => b.eval('document.body.innerText');
 /** README 配图：先把页面上测试用的本机地址换成示例地址，等动画结束再截 */
 const docShot = async (name, selector) => {
   if (!docs) return;
-  await b.eval(`document.querySelectorAll('.detail-host, .srv-name').forEach((e) => { e.textContent = '${DEMO}'; }); document.querySelectorAll('.detail-head .hint').forEach((e) => { e.textContent = 'root · SSH 端口 22 · 已记住'; })`);
+  await b.eval(`document.querySelectorAll('.detail-host, .srv-name').forEach((e) => { e.textContent = '${DEMO}'; }); document.querySelectorAll('.detail-head .hint, .srv-sub').forEach((e) => { e.remove(); })`);
   await b.eval('window.scrollTo(0, 0)');
   await b.sleep(450);
   // 「返回」链接在截图区域外面一点点，截的时候先藏起来
@@ -115,18 +115,18 @@ try {
   await shot('03-填写服务器信息');
 
   await b.click('[data-test=install]');
-  await b.waitFor(`document.querySelectorAll('.mini-steps li.done').length >= 3`, 30000);
+  await b.waitFor(`parseInt(document.querySelector('.ring-num')?.textContent ?? '0', 10) >= 3`, 30000);
   await shot('04-安装中');
   await docShot('installing', '.page');
   await b.waitFor(`document.querySelector('[data-test=result]')`, 60000);
   await docShot('installed', '.page');
-  await b.click('[data-test=log-toggle]');
   await shot('05-安装完成');
   const page = await text();
   assert.ok(!page.includes(PASSWORD), 'SSH 密码不应该出现在页面上');
   const pass = await b.eval(`[...document.querySelectorAll('.cred-row .cred-v')][2].textContent`);
   assert.match(pass, /^[A-Za-z0-9]{16}$/);
-  const log = await b.eval(`document.querySelector('.log').textContent`);
+  // 装好的页面不显示日志，直接看后端记下的日志（就是用户点「查看详细日志」会看到的内容）
+  const log = [...jobs.jobs.values()].find((j) => j.action === 'install' && j.state === 'ok').lines.join('\n');
   assert.ok(!log.includes(pass), '面板密码不应该出现在日志里');
   assert.ok(/面板端口 \[2053\]: \d+/.test(log), '日志里应该看得到自动回答的提问');
   assert.equal(store.list().length, 1, '默认勾上「记住」，装完应该记住这台服务器');
