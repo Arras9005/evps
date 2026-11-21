@@ -33,7 +33,7 @@ NP_VERSION="2.1.0"
 RED='\\033[0;31m'
 GREEN='\\033[1;32m'
 NC='\\033[0m'
-ok()   { echo -e "\${GREEN}[OK]\${NC} $*" >&2; }
+ok()   { sleep "\${EVPS_FAKE_DELAY:-0}"; echo -e "\${GREEN}[OK]\${NC} $*" >&2; }
 info() { echo -e "[INFO] $*" >&2; }
 need_tty() {
     if [[ ! -t 0 ]]; then

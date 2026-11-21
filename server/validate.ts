@@ -71,8 +71,9 @@ export function parseTarget(raw: unknown): ParsedTarget | null {
   return { host, port, user };
 }
 
-const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-const ALNUM = LETTERS + '0123456789';
+// 去掉容易看错的 0 O o 1 l I：用户可能要照着屏幕手敲
+const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz';
+const ALNUM = LETTERS + '23456789';
 
 function pick(alphabet: string, n: number): string {
   let out = '';

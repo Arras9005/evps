@@ -54,6 +54,7 @@ describe('其他', () => {
       assert.ok(c.port >= 20000 && c.port <= 60000);
       assert.match(c.user, /^[A-Za-z][A-Za-z0-9]{9}$/);
       assert.match(c.pass, /^[A-Za-z0-9]{16}$/);
+      assert.doesNotMatch(c.user + c.pass, /[0Oo1lI]/, '不该有容易看错的字符');
     }
   });
   it('远端命令：不是 root 用 sudo，并带上识别用的提示', () => {

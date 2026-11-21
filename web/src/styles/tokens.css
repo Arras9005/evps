@@ -1,0 +1,115 @@
+/* 设计变量：尺度、圆角、字号、配色（科技蔚蓝 / 深邃星空），
+   深色跟随系统（prefers-color-scheme），不另做开关，也不存浏览器存储。 */
+:root {
+  --ui-header-height: 3.5rem;
+  --ui-card-padding: 1rem;
+  --ui-section-gap: 0.75rem;
+  --ui-control-height: 2rem;
+  --ui-control-compact: 1.75rem;
+  --ui-radius-control: 0.3125rem;
+  --ui-radius-card: 0.5rem;
+  --ui-radius-popover: 0.375rem;
+  --ui-radius-dialog: 0.625rem;
+  --ui-font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans SC", Arial, sans-serif;
+  --ui-font-mono: Consolas, "SFMono-Regular", "Noto Sans Mono CJK SC", ui-monospace, monospace;
+  --ui-font-body: 0.875rem;
+  --ui-line-body: 1.375rem;
+  --ui-font-caption: 0.7812rem;
+  --ui-font-section: 1.0625rem;
+
+  color-scheme: light;
+  --ui-brand: #1f6fff;
+  --ui-action: #1557d6;
+  --ui-action-hover: #104bbf;
+  --ui-action-active: #0d3e9e;
+  --ui-on-action: #ffffff;
+  --ui-accent-text: #1557d6;
+  --ui-bg: #f4f7fb;
+  --ui-surface: #ffffff;
+  --ui-surface-soft: #f8fbff;
+  --ui-sunken: #f1f5fb;
+  --ui-text: #172033;
+  --ui-text-secondary: #5f7089;
+  --ui-border: #dbe6f5;
+  --ui-selected-bg: #e8eefb;
+  --ui-hover-bg: #f3f7fd;
+  --ui-focus: #1557d6;
+  --ui-disabled-bg: #d0ddf7;
+  --ui-disabled-text: #a2a6ad;
+  --ui-success-text: #14764f;
+  --ui-success-bg: #eaf7f0;
+  --ui-success-border: #a9d9c0;
+  --ui-warning-text: #8a4b00;
+  --ui-warning-bg: #fff5df;
+  --ui-warning-border: #e5c587;
+  --ui-danger-text: #b42332;
+  --ui-danger-bg: #fff0f1;
+  --ui-danger-border: #efb2ba;
+  --ui-info-text: #1557d6;
+  --ui-info-bg: #edf3ff;
+  --ui-info-border: #b7cdf5;
+  --ui-grid: #e3e9f2;
+  --ui-head-bg: #f4f7fb;
+  --ui-row-hover: #f2f6fd;
+  --ui-row-selected: #e6eefc;
+  --t0: #5f7089; --t1: #14764f; --t2: #1557d6; --t3: #a15c00; --t4: #b42332; --t5: #6b3fb5; --t6: #0f766e; --t7: #b0307a;
+  --card-shadow: 0 1px 0.125rem rgba(12, 45, 78, 0.05);
+  --card-shadow-hover: 0 0.375rem 1.5rem rgba(12, 45, 78, 0.09);
+  --button-elevated: 0 0.125rem 0.25rem rgba(21, 87, 214, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  --button-elevated-hover: 0 0.25rem 0.625rem rgba(21, 87, 214, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  --danger-elevated: 0 0.125rem 0.25rem rgba(180, 35, 50, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  --dialog-shadow: 0 1rem 3rem rgba(12, 45, 78, 0.12);
+  --scrim: rgba(12, 45, 78, 0.45);
+  --header-bg: #ffffff;
+  --tick-border: #b4c2d8;
+  --header-bg2: #f6f9fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ui-brand: #3b82f6;
+    --ui-action: #2f6fe0;
+    --ui-action-hover: #3d7df0;
+    --ui-action-active: #2559bd;
+    --ui-accent-text: #8fb8ff;
+    --ui-bg: #0a1220;
+    --ui-surface: #111c2e;
+    --ui-surface-soft: #16243a;
+    --ui-sunken: #0d1626;
+    --ui-text: #e8eef7;
+    --ui-text-secondary: #93a5bd;
+    --ui-border: #243247;
+    --ui-selected-bg: #1d2f4a;
+    --ui-hover-bg: #1a2a42;
+    --ui-focus: #8fb8ff;
+    --ui-disabled-bg: #182640;
+    --ui-disabled-text: #5f7390;
+    --ui-success-text: #5fd3a8;
+    --ui-success-bg: #12302c;
+    --ui-success-border: #2a5c52;
+    --ui-warning-text: #f0c36d;
+    --ui-warning-bg: #35291a;
+    --ui-warning-border: #6a5430;
+    --ui-danger-text: #ff8b96;
+    --ui-danger-bg: #3a2029;
+    --ui-danger-border: #74404d;
+    --ui-info-text: #8fb8ff;
+    --ui-info-bg: #15284a;
+    --ui-info-border: #2c4e86;
+    --ui-grid: #223148;
+    --ui-head-bg: #14213a;
+    --ui-row-hover: #172640;
+    --ui-row-selected: #1b3052;
+    --t0: #9db0c8; --t1: #5fd3a8; --t2: #8fb8ff; --t3: #f0c36d; --t4: #ff8b96; --t5: #c3a6ff; --t6: #5ed6cb; --t7: #ff9fd2;
+    --tick-border: #4a5f7e;
+    --header-bg2: #0e1829;
+    --card-shadow: 0 1px 0.125rem rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 0.75rem 2rem rgba(0, 0, 0, 0.5);
+    --button-elevated: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    --button-elevated-hover: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    --dialog-shadow: 0 1.25rem 3.5rem rgba(0, 0, 0, 0.6);
+    --scrim: rgba(3, 8, 16, 0.66);
+    --header-bg: #111c2e;
+  }
+}
