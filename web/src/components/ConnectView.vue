@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue';
 import { splitTarget } from '../api.ts';
+import { noFill } from '../inputs.ts';
 import AppIcon from './AppIcon.vue';
+import SecretInput from './SecretInput.vue';
 import StepsBar from './StepsBar.vue';
 
 /** 表单内容放在 App 里：安装没连上退回来时，填过的都还在 */
@@ -18,7 +20,6 @@ const props = defineProps<{ draft: Draft }>();
 const emit = defineEmits<{ submit: [] }>();
 
 const d = props.draft;
-const showPassword = ref(false);
 const hostInput = ref<HTMLInputElement | null>(null);
 
 /** 粘贴 root@1.2.3.4:2222 这类写法时，自动拆到三个框里 */
@@ -39,6 +40,12 @@ function validate(): string | null {
   return null;
 }
 
+/** 在输入框里按回车就提交；焦点在按钮上时回车本身会触发按钮点击，这里不再重复提交 */
+function onEnter(e: KeyboardEvent): void {
+  if ((e.target as HTMLElement | null)?.tagName === 'BUTTON' || e.isComposing) return;
+  void submit();
+}
+
 async function submit(): Promise<void> {
   d.error = validate();
   if (d.error) {
@@ -55,31 +62,36 @@ async function submit(): Promise<void> {
 <template>
   <section class="page">
     <StepsBar :at="1" />
-    <h1 class="title">连接你的服务器</h1>
-    <p class="lead sm">在服务商后台能找到 IP 和 root 密码</p>
 
-    <form class="card form" novalidate @submit.prevent="submit" @input="d.error = null">
+    <!-- 让用户放心的关键：密码不离开这台电脑 -->
+    <div class="trust" data-test="trust">
+      <span class="trust-ic"><AppIcon name="shield" /></span>
+      <div>
+        <p class="trust-title">密码只在你这台电脑上使用</p>
+        <p class="trust-sub">evps 直接从你的电脑登录服务器，不保存密码，也不上传到任何地方</p>
+      </div>
+    </div>
+
+    <!-- 不用 <form>：浏览器看到表单提交会弹「要保存密码吗」 -->
+    <div class="card form" @input="d.error = null" @keydown.enter="onEnter">
       <label class="field">
         <span class="field-label">服务器 IP</span>
-        <input ref="hostInput" v-model="d.host" class="input" data-test="host" autocomplete="off" spellcheck="false" placeholder="例如 203.0.113.7" @blur="onHostBlur" />
+        <input ref="hostInput" v-model="d.host" v-bind="noFill" class="input" data-test="host" placeholder="例如 203.0.113.7" @blur="onHostBlur" />
       </label>
 
       <label class="field">
         <span class="field-label">{{ d.user && d.user !== 'root' ? `${d.user} 的密码` : 'root 密码' }}</span>
-        <span class="input pw">
-          <input v-model="d.password" data-test="password" :type="showPassword ? 'text' : 'password'" autocomplete="off" placeholder="买服务器时服务商给的密码" />
-          <button type="button" class="pw-eye" :aria-label="showPassword ? '隐藏密码' : '显示密码'" @click="showPassword = !showPassword">{{ showPassword ? '隐藏' : '显示' }}</button>
-        </span>
+        <SecretInput v-model="d.password" test-id="password" placeholder="买服务器时服务商给的密码" />
       </label>
 
       <div class="field-row">
         <label class="field">
           <span class="field-label">SSH 端口</span>
-          <input v-model="d.port" class="input" data-test="port" inputmode="numeric" autocomplete="off" />
+          <input v-model="d.port" v-bind="noFill" class="input" data-test="port" inputmode="numeric" />
         </label>
         <label class="field">
           <span class="field-label">SSH 用户名</span>
-          <input v-model="d.user" class="input" data-test="user" autocomplete="off" spellcheck="false" />
+          <input v-model="d.user" v-bind="noFill" class="input" data-test="user" />
         </label>
       </div>
 
@@ -88,10 +100,11 @@ async function submit(): Promise<void> {
         <span>记住这台服务器，下次不用再输密码</span>
       </label>
 
-      <div v-if="d.error" class="tip bad" role="alert" data-test="form-error"><span class="tip-ic">!</span><div>{{ d.error }}</div></div>
+      <Transition name="fade">
+        <div v-if="d.error" class="tip bad" role="alert" data-test="form-error"><span class="tip-ic">!</span><div>{{ d.error }}</div></div>
+      </Transition>
 
-      <button type="submit" class="btn primary xl block" data-test="install">连接并安装</button>
-    </form>
-    <p class="safe"><AppIcon name="shield" />密码只在这台电脑上使用，不保存、不上传</p>
+      <button type="button" class="btn primary xl block" data-test="install" @click="submit">连接并安装</button>
+    </div>
   </section>
 </template>

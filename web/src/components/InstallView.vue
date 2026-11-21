@@ -23,6 +23,10 @@ const failure = ref<JobFailure | null>(null);
 const cred = ref<InstanceType<typeof CredCard> | null>(null);
 
 onMounted(async () => {
+  // 先把「装好了」的插图下好、解码好，装完切过去时不会再后冒出来
+  const img = new Image();
+  img.src = done;
+  void img.decode?.().catch(() => undefined);
   const end = await runJob('install', props.conn, (j, more) => {
     job.value = j;
     lines.value.push(...more);
@@ -67,12 +71,13 @@ function openPanel(): void {
 </script>
 
 <template>
+  <Transition name="swap" mode="out-in">
   <!-- 装好了 -->
-  <section v-if="finished && result" class="page" data-test="job">
+  <section v-if="finished && result" key="done" class="page" data-test="job">
     <StepsBar :at="3" />
     <img class="done-art" :src="done" alt="" width="140" height="140" />
     <h1 class="title">{{ result.kind === 'already' ? '这台服务器已经装过面板' : '面板装好了' }}</h1>
-    <p class="lead sm">{{ result.kind === 'already' ? '没有重装。下面是现在的登录信息。' : '请保存好下面的登录信息' }}</p>
+    <p v-if="result.kind === 'already'" class="lead sm">没有重装，下面是现在的登录信息</p>
     <div class="stack">
       <CredCard v-if="result.panel" ref="cred" :panel="result.panel" :reach="result.reach" />
       <div class="btn-row">
@@ -84,7 +89,7 @@ function openPanel(): void {
   </section>
 
   <!-- 安装中 / 失败 -->
-  <section v-else class="page" data-test="job">
+  <section v-else key="progress" class="page" data-test="job">
     <StepsBar :at="2" :failed="!!failure" />
     <div class="ring" :class="{ bad: failure }">
       <svg viewBox="0 0 148 148" aria-hidden="true">
@@ -112,4 +117,5 @@ function openPanel(): void {
       <LogBox :lines="lines" :open="lines.length > 3" />
     </div>
   </section>
+  </Transition>
 </template>

@@ -12,7 +12,6 @@ function open(p: Provider): void {
 <template>
   <section class="page">
     <h1 class="title">先买一台 VPS</h1>
-    <p class="lead sm">几分钟就能买好，买完回到这里继续</p>
     <div class="card promo">
       <div v-for="p in promo.providers" :key="p.name" class="prov">
         <span class="prov-logo">{{ p.name.slice(0, 1) }}</span>

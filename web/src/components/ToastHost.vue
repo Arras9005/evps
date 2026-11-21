@@ -13,8 +13,13 @@ watch(() => toasts.items.length, async (n) => {
   const node = el.value;
   if (!node || typeof node.showPopover !== 'function') return;
   try {
-    if (node.matches(':popover-open')) node.hidePopover();
-    if (n > 0) node.showPopover();
+    if (n > 0) {
+      if (node.matches(':popover-open')) node.hidePopover();
+      node.showPopover();
+    } else {
+      // 等最后一条的淡出动画放完再收起，不然会一下子消失
+      setTimeout(() => { if (toasts.items.length === 0 && node.matches(':popover-open')) node.hidePopover(); }, 220);
+    }
   } catch {
     /* 不支持就退回到普通定位 */
   }
@@ -23,6 +28,8 @@ watch(() => toasts.items.length, async (n) => {
 
 <template>
   <div ref="el" class="toasts" popover="manual" role="status" aria-live="polite">
-    <div v-for="t in toasts.items" :key="t.id" class="toast"><AppIcon name="check" />{{ t.text }}</div>
+    <TransitionGroup name="toast">
+      <div v-for="t in toasts.items" :key="t.id" class="toast"><AppIcon name="check" />{{ t.text }}</div>
+    </TransitionGroup>
   </div>
 </template>

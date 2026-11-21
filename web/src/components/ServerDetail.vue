@@ -8,6 +8,7 @@ import type { Action } from '../types.ts';
 import AppIcon from './AppIcon.vue';
 import CredCard from './CredCard.vue';
 import LogBox from './LogBox.vue';
+import SecretInput from './SecretInput.vue';
 import StatusPill from './StatusPill.vue';
 
 const props = defineProps<{ skey: string; conn: Conn; host: string; port: number; user: string; remembered: boolean; serverId?: string }>();
@@ -118,35 +119,36 @@ function unitText(active: string): string {
 
     <label v-if="needsSudo" class="field sudo">
       <span class="field-label">{{ user }} 的密码（这个账号不是 root，操作要用 sudo）</span>
-      <input v-model="sudoPassword" class="input" type="password" autocomplete="off" />
+      <SecretInput v-model="sudoPassword" />
     </label>
 
     <div class="card detail-card" data-test="job">
+      <Transition name="swap" mode="out-in">
       <!-- 第一次查，还没有结果 -->
-      <div v-if="health === 'checking'" class="checking">
+      <div v-if="health === 'checking'" key="checking" class="checking">
         <span class="spinner big" />
         <p>正在连接服务器查看状态…</p>
       </div>
 
       <!-- 连不上 -->
-      <template v-else-if="health === 'unreachable'">
+      <div v-else-if="health === 'unreachable'" key="unreachable" class="detail-body">
         <div class="tip bad"><span class="tip-ic">!</span><div>{{ state.error?.message }}</div></div>
         <div class="btn-row">
           <button type="button" class="btn primary xl grow1" :disabled="state.checking" @click="refresh"><span v-if="state.checking" class="spinner" />再试一次</button>
         </div>
         <LogBox :lines="state.lines" />
-      </template>
+      </div>
 
       <!-- 还没装 -->
-      <template v-else-if="health === 'not-installed'">
+      <div v-else-if="health === 'not-installed'" key="none" class="detail-body">
         <div class="empty">
           <p class="empty-title">这台服务器上还没有装面板</p>
         </div>
         <button type="button" class="btn primary xl block" data-test="install" @click="emit('install', conn)">安装面板</button>
-      </template>
+      </div>
 
       <!-- 装了 -->
-      <template v-else>
+      <div v-else key="installed" class="detail-body">
         <CredCard v-if="panel" :panel="panel" :reach="result?.reach" />
         <div v-if="health === 'partial'" class="units">
           <span v-for="u in units" :key="u.name" class="unit" :class="u.active === 'active' ? 'ok' : u.active === 'failed' ? 'bad' : 'idle'">{{ labels[u.name] ?? u.name }}：{{ unitText(u.active) }}</span>
@@ -161,9 +163,12 @@ function unitText(active: string): string {
             <button type="button" class="btn ghost xl grow1" data-test="stop" :disabled="!!busy || state.checking" @click="act('stop')"><span v-if="busy === 'stop'" class="spinner" />停止</button>
           </template>
         </div>
-      </template>
+      </div>
+      </Transition>
 
+      <Transition name="fade">
       <div v-if="actionError" class="tip bad" role="alert"><span class="tip-ic">!</span><div>{{ actionError.message }}</div></div>
+      </Transition>
       <LogBox v-if="actionLines.length && (actionError || busy)" :lines="actionLines" :open="!!actionError && actionLines.length > 3" />
       <p v-if="busy === 'uninstall'" class="checking-line"><span class="spinner" />正在卸载，大约一分钟…</p>
     </div>

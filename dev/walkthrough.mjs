@@ -111,7 +111,8 @@ try {
   assert.equal(await b.eval(`document.querySelector('[data-test=host]').value`), '127.0.0.1');
   await shot('03a-密码不对');
   await setValue('[data-test=password]', PASSWORD);
-  assert.equal(await b.eval(`!!document.querySelector('[data-test=form-error]')`), false, '改了密码，旧的出错提示应该消失');
+  // 改了密码，旧的出错提示应该消失（有淡出动画，等它放完）
+  await b.waitFor(`!document.querySelector('[data-test=form-error]')`, 2000);
   await shot('03-填写服务器信息');
 
   await b.click('[data-test=install]');

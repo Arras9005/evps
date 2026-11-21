@@ -55,13 +55,14 @@ async function loadServers(): Promise<void> {
 
 onMounted(async () => {
   if (!hasToken) return;
-  const r = await api<Info>('/api/info');
+  // 基本信息和记住的服务器一起拿到再显示：不然会先闪一下欢迎页，再跳成服务器列表
+  const [r, list] = await Promise.all([api<Info>('/api/info'), api<{ servers: SavedServer[] }>('/api/servers')]);
   if (!r.ok) {
     fatal.value = r.error.message;
     return;
   }
+  if (list.ok) saved.value = list.data.servers;
   info.value = r.data;
-  await loadServers();
   void api<{ latest: string | null }>('/api/update').then((u) => { if (u.ok) update.value = u.data.latest; });
   // 告诉 evps 网页还开着；网页关掉一段时间后它会自己退出
   ping = setInterval(() => { void api('/api/ping', { method: 'POST', body: {} }); }, 60_000);
@@ -70,8 +71,24 @@ onBeforeUnmount(() => clearInterval(ping));
 
 function go(r: Route): void {
   route.value = r;
+}
+
+/** 旧页面淡出以后再回到顶部：先滚会看到旧页面跳一下 */
+function scrollTop(): void {
   window.scrollTo({ top: 0 });
 }
+
+/** 每个页面一个 key：key 变了才播放切换动画 */
+const viewKey = computed(() => {
+  if (quitDone.value) return 'quit';
+  if (fatal.value) return 'fatal';
+  if (!info.value) return 'loading';
+  const r = route.value;
+  if (r.name === 'home') return servers.value.length ? 'home-list' : 'home-welcome';
+  if (r.name === 'install') return `install-${r.run}`;
+  if (r.name === 'server') return `server-${r.key}`;
+  return r.name;
+});
 
 function goHome(): void {
   if (installing.value) return;
@@ -88,6 +105,8 @@ function sessionKey(host: string, port: number, user: string): string {
 }
 
 function submitDraft(): void {
+  // 双击按钮、或者旧页面淡出时又点了一下：只开始一次
+  if (installing.value) return;
   draft.error = null;
   installing.value = true;
   go({ name: 'install', run: Date.now(), conn: { host: draft.host.trim(), port: Number(draft.port), user: draft.user.trim(), password: draft.password, remember: draft.remember } });
@@ -169,52 +188,54 @@ const backText = computed(() => (route.value.name === 'server' ? '我的服务�
       <AppMenu v-if="info && !quitDone" :version="info.version" :disabled="quitting || installing" @quit="quit" />
     </header>
 
+    <Transition name="fade">
     <div v-if="update && !quitDone" class="update-bar" data-test="update">
       <b>有新版本 {{ update }}</b>（你现在用的是 {{ info?.version }}）。更新方法：关掉 evps，在黑窗口运行 <code>npm i -g @zhangbo9005/easy-vps@latest</code>，再运行 <code>evps</code>。
     </div>
+    </Transition>
 
     <main class="main">
-      <section v-if="quitDone" class="page center-page">
-        <div class="big-mark ok"><AppIcon name="check" /></div>
-        <h1 class="title">{{ quitDone }}</h1>
-      </section>
-      <section v-else-if="fatal" class="page center-page">
-        <div class="big-mark warn"><AppIcon name="warn" /></div>
-        <h1 class="title">打不开</h1>
-        <p class="lead sm">{{ fatal }}</p>
-      </section>
-      <template v-else-if="info">
-        <div v-if="showBack" class="back-row"><button type="button" class="back" data-test="back" @click="go({ name: 'home' })"><AppIcon name="chevron" class="rot-back" />{{ backText }}</button></div>
-        <Transition name="page" mode="out-in">
-          <ServerList v-if="route.name === 'home' && servers.length" :servers="servers" @open="(s) => go({ name: 'server', key: s.key })" @add="startNew" />
-          <WelcomeView v-else-if="route.name === 'home'" :has-promo="hasPromo" @start="startNew" @need="go({ name: 'promo' })" />
-          <PromoView v-else-if="route.name === 'promo'" :promo="info.promo" @bought="startNew" />
-          <ConnectView v-else-if="route.name === 'connect'" :draft="draft" @submit="submitDraft" />
-          <InstallView
-            v-else-if="route.name === 'install'"
-            :key="route.run"
-            :conn="route.conn"
-            @connect-failed="onConnectFailed"
-            @finished="onInstalled"
-            @retry="installOn((route as { conn: Conn }).conn)"
-            @edit="installing = false; go({ name: 'connect' })"
-            @manage="lastInstalledKey && go({ name: 'server', key: lastInstalledKey })"
-          />
-          <ServerDetail
-            v-else-if="route.name === 'server' && current"
-            :key="current.key"
-            :skey="current.key"
-            :conn="current.conn"
-            :host="current.host"
-            :port="current.port"
-            :user="current.user"
-            :remembered="current.remembered"
-            :server-id="'serverId' in current.conn ? current.conn.serverId : undefined"
-            @install="installOn"
-            @gone="onGone"
-          />
-        </Transition>
-      </template>
+      <Transition name="page" mode="out-in" appear @after-leave="scrollTop">
+        <div :key="viewKey" class="view">
+          <section v-if="quitDone" class="page center-page">
+            <div class="big-mark ok"><AppIcon name="check" /></div>
+            <h1 class="title">{{ quitDone }}</h1>
+          </section>
+          <section v-else-if="fatal" class="page center-page">
+            <div class="big-mark warn"><AppIcon name="warn" /></div>
+            <h1 class="title">打不开</h1>
+            <p class="lead sm">{{ fatal }}</p>
+          </section>
+          <template v-else-if="info">
+            <div v-if="showBack" class="back-row"><button type="button" class="back" data-test="back" @click="go({ name: 'home' })"><AppIcon name="chevron" class="rot-back" />{{ backText }}</button></div>
+            <ServerList v-if="route.name === 'home' && servers.length" :servers="servers" @open="(s) => go({ name: 'server', key: s.key })" @add="startNew" />
+            <WelcomeView v-else-if="route.name === 'home'" :has-promo="hasPromo" @start="startNew" @need="go({ name: 'promo' })" />
+            <PromoView v-else-if="route.name === 'promo'" :promo="info.promo" @bought="startNew" />
+            <ConnectView v-else-if="route.name === 'connect'" :draft="draft" @submit="submitDraft" />
+            <InstallView
+              v-else-if="route.name === 'install'"
+              :conn="route.conn"
+              @connect-failed="onConnectFailed"
+              @finished="onInstalled"
+              @retry="installOn((route as { conn: Conn }).conn)"
+              @edit="installing = false; go({ name: 'connect' })"
+              @manage="lastInstalledKey && go({ name: 'server', key: lastInstalledKey })"
+            />
+            <ServerDetail
+              v-else-if="route.name === 'server' && current"
+              :skey="current.key"
+              :conn="current.conn"
+              :host="current.host"
+              :port="current.port"
+              :user="current.user"
+              :remembered="current.remembered"
+              :server-id="'serverId' in current.conn ? current.conn.serverId : undefined"
+              @install="installOn"
+              @gone="onGone"
+            />
+          </template>
+        </div>
+      </Transition>
     </main>
 
   </div>
