@@ -2,12 +2,37 @@
   "name": "evps",
   "version": "0.1.0",
   "description": "在自己电脑的浏览器里，给自己的 VPS 一键安装 Geto 面板，并能查看、停止、重启、卸载。SSH 密码只在你自己的电脑上使用。",
-  "keywords": ["vps", "ssh", "installer", "panel"],
+  "keywords": [
+    "vps",
+    "ssh",
+    "installer",
+    "panel"
+  ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arras9005/evps.git"
+  },
+  "homepage": "https://github.com/Arras9005/evps#readme",
+  "bugs": {
+    "url": "https://github.com/Arras9005/evps/issues"
+  },
   "type": "module",
-  "bin": { "evps": "dist/server/main.js" },
-  "files": ["dist", "remote", "promo.json", "w.ps1", "m.sh", "README.md", "LICENSE"],
-  "engines": { "node": ">=18" },
+  "bin": {
+    "evps": "dist/server/main.js"
+  },
+  "files": [
+    "dist",
+    "remote",
+    "promo.json",
+    "w.ps1",
+    "m.sh",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev:server": "node --experimental-strip-types server/main.ts",
     "dev:web": "vite",
