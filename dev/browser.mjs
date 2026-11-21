@@ -170,6 +170,14 @@ export async function launch({ port = 9333, width = 1280, height = 900, extraArg
       const r = await send('Page.captureScreenshot', { format: 'png', ...(clip ? { clip, captureBeyondViewport: true } : {}) });
       writeFileSync(path, Buffer.from(r.data, 'base64'));
     },
+    /** 只截一个元素（四周留 pad 像素），给 README 配图用 */
+    async shotElement(path, selector, { pad = 12, scale = 2 } = {}) {
+      const r = await api.eval(`(() => { const e = document.querySelector(${JSON.stringify(selector)}); if (!e) return null; const b = e.getBoundingClientRect(); return { x: b.left + scrollX, y: b.top + scrollY, w: b.width, h: b.height }; })()`);
+      if (!r) throw new Error(`找不到：${selector}`);
+      const clip = { x: Math.max(0, r.x - pad), y: Math.max(0, r.y - pad), width: r.w + pad * 2, height: r.h + pad * 2, scale };
+      const shot = await send('Page.captureScreenshot', { format: 'png', clip, captureBeyondViewport: true });
+      writeFileSync(path, Buffer.from(shot.data, 'base64'));
+    },
     sleep,
     async close() {
       try { ws.close(); } catch { /* 已关闭 */ }
