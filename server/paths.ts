@@ -9,7 +9,8 @@ function findRoot(): string {
     const pkg = join(dir, 'package.json');
     if (existsSync(pkg)) {
       try {
-        if ((JSON.parse(readFileSync(pkg, 'utf8')) as { name?: string }).name === 'evps') return dir;
+        const name = (JSON.parse(readFileSync(pkg, 'utf8')) as { name?: string }).name;
+        if (name === '@zhangbo9005/easy-vps' || name === 'evps') return dir;
       } catch {
         // 不是我们的 package.json，继续往上找
       }

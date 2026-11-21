@@ -31,7 +31,6 @@ function need(): void {
       <span class="choice-title">我还没有 VPS</span>
       <span class="choice-sub">去买一台，几分钟就能用</span>
       <span class="choice-go">去购买（推荐） <AppIcon name="external" /></span>
-      <span class="ad-mark">推广</span>
     </button>
   </section>
 

@@ -36,8 +36,6 @@
 .choice-title { font-size: 1.125rem; font-weight: 700; }
 .choice-sub { color: var(--ui-text-secondary); font-size: 0.875rem; }
 .choice-go { display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.5rem; color: var(--ui-accent-text); font-weight: 600; font-size: 0.875rem; }
-.ad-mark { position: absolute; top: 0.625rem; right: 0.75rem; font-size: 0.6875rem; line-height: 1; padding: 0.1875rem 0.3125rem; border-radius: 0.1875rem; color: var(--ui-text-secondary); border: 1px solid var(--ui-border); }
-.ad-mark.inline { position: static; margin-left: 0.375rem; vertical-align: 0.125rem; }
 .saved h2 { margin-bottom: -0.5rem; }
 .saved-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.375rem; }
 .saved-row { width: 100%; display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.75rem; border: 1px solid var(--ui-border); border-radius: var(--ui-radius-control); background: var(--ui-surface-soft); cursor: pointer; text-align: left; }

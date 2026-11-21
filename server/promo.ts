@@ -13,11 +13,13 @@ export interface Provider {
 
 export interface Promo {
   providers: Provider[];
+  /** 作者为什么推荐这家，一条一行 */
+  reasons: string[];
   /** 买 VPS 时的注意事项，一条一行 */
   tips: string[];
 }
 
-const EMPTY: Promo = { providers: [], tips: [] };
+const EMPTY: Promo = { providers: [], tips: [], reasons: [] };
 
 function text(v: unknown, max: number): string | null {
   return typeof v === 'string' && v.trim() && v.length <= max && !/[\u0000-\u001f<>]/.test(v) ? v.trim() : null;
@@ -25,7 +27,7 @@ function text(v: unknown, max: number): string | null {
 
 export function parsePromo(raw: unknown): Promo {
   if (!raw || typeof raw !== 'object') return EMPTY;
-  const r = raw as { providers?: unknown; tips?: unknown };
+  const r = raw as { providers?: unknown; tips?: unknown; reasons?: unknown };
   const providers: Provider[] = [];
   for (const p of Array.isArray(r.providers) ? r.providers.slice(0, 5) : []) {
     const name = text((p as Provider)?.name, 40);
@@ -40,7 +42,8 @@ export function parsePromo(raw: unknown): Promo {
     providers.push({ name, url, note });
   }
   const tips = (Array.isArray(r.tips) ? r.tips : []).map((t) => text(t, 120)).filter((t): t is string => t !== null).slice(0, 8);
-  return { providers, tips };
+  const reasons = (Array.isArray(r.reasons) ? r.reasons : []).map((t) => text(t, 200)).filter((t): t is string => t !== null).slice(0, 6);
+  return { providers, tips, reasons };
 }
 
 export function loadPromo(): Promo {

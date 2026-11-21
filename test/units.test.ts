@@ -62,8 +62,10 @@ describe('其他', () => {
     assert.match(remoteCommand('echo hi', 'status', false), /sudo -p '@@EVPS_SUDO@@ ' bash "\$d\/v.sh" status/);
   });
   it('推荐链接只收 https', () => {
-    const p = parsePromo({ providers: [{ name: 'A', url: 'https://a.example/x' }, { name: 'B', url: 'http://b.example' }, { name: 'C', url: 'javascript:alert(1)' }], tips: ['x', 3] });
+    const reason = 'VPS 的性价比比较高。购买之前建议和客服先沟通一下，要几个 IP 测一下，哪个区的评分高，就去买哪个区的。';
+    const p = parsePromo({ providers: [{ name: 'A', url: 'https://a.example/x' }, { name: 'B', url: 'http://b.example' }, { name: 'C', url: 'javascript:alert(1)' }], tips: ['x', 3], reasons: [reason, '没有之一'] });
     assert.deepEqual(p.providers.map((x) => x.name), ['A']);
     assert.deepEqual(p.tips, ['x']);
+    assert.deepEqual(p.reasons, [reason, '没有之一']);
   });
 });

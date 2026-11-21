@@ -19,12 +19,15 @@ function open(p: Provider): void {
       <div v-for="p in promo.providers" :key="p.name" class="provider">
         <div class="grow">
           <b>{{ p.name }}</b>
-          <span class="ad-mark inline">推广</span>
           <p v-if="p.note" class="muted small">{{ p.note }}</p>
         </div>
         <button type="button" class="btn primary" @click="open(p)">去购买 <AppIcon name="external" /></button>
       </div>
     </div>
+    <h3 v-if="promo.reasons.length">我的推荐理由</h3>
+    <ol v-if="promo.reasons.length" class="tips">
+      <li v-for="r in promo.reasons" :key="r">{{ r }}</li>
+    </ol>
     <h3>购买时注意</h3>
     <ol class="tips">
       <li v-for="t in promo.tips" :key="t">{{ t }}</li>

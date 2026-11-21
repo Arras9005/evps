@@ -1,6 +1,6 @@
 /**
  * 界面走查：真的后端 + 假 SSH 服务器 + 假 VPS，用无头 Chrome 把每个页面点一遍、截图，并检查几件事：
- * 页面没有报错（包括内容安全策略拦截）、推广链接不出现在页面里、SSH 密码和面板密码不出现在日志里。
+ * 页面没有报错（包括内容安全策略拦截）、购买链接不出现在页面里、SSH 密码和面板密码不出现在日志里。
  * 用法：node --experimental-strip-types dev/walkthrough.mjs <截图目录> [README 配图目录]
  * 给了第二个目录，就顺便截 README 用的几张图（只截关键区域，示例地址统一换成文档专用的 203.0.113.7）。
  * 需要 Linux（unshare、script）和 Chrome（找不到时设 CHROME_BIN）。
@@ -72,7 +72,7 @@ try {
   await b.waitFor(`document.querySelector('[data-test=have]')`);
   assert.equal(await b.eval('location.hash'), '', '令牌应该从地址栏清掉');
   const html = await b.eval('document.documentElement.outerHTML');
-  assert.ok(!html.includes('qsu.hk'), '推广链接不应该出现在页面里');
+  assert.ok(!html.includes('qsu.hk'), '购买链接不应该出现在页面里');
   await shot('01-首页');
   await docShot('home', '.wrap');
   await b.scheme('dark');
