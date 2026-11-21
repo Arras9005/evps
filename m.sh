@@ -1,6 +1,6 @@
 #!/bin/sh
 # evps 启动脚本（Mac / Linux）。在「终端」里粘贴：
-#   curl -fsSL https://registry.npmmirror.com/evps/latest/files/m.sh | sh
+#   curl -fsSL https://registry.npmmirror.com/@zhangbo9005/easy-vps/latest/files/m.sh | sh
 #
 # 它做的事：
 # 1. 电脑上有 Node.js 18 以上，就直接用；
@@ -13,7 +13,7 @@
 main() {
   set -u
   BASE="${EVPS_HOME:-$HOME/.evps}"
-  PKG="${EVPS_PACKAGE:-evps@latest}"
+  PKG="${EVPS_PACKAGE:-@zhangbo9005/easy-vps@latest}"
 
   say() { printf '%s\n' "$*"; }
   die() { printf '\n%s\n' "$*" >&2; exit 1; }
@@ -88,7 +88,7 @@ main() {
 
   # 选一个能连上的 npm 源：国内镜像优先
   registry=https://registry.npmmirror.com
-  if ! curl -fs --max-time 8 -o /dev/null "$registry/evps"; then registry=https://registry.npmjs.org; fi
+  if ! curl -fs --max-time 8 -o /dev/null "$registry/@zhangbo9005/easy-vps"; then registry=https://registry.npmjs.org; fi
 
   say "正在启动 evps（第一次要下载一会儿）…"
   rm -f "$BASE/cleanup-requested"

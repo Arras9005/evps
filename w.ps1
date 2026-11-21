@@ -17,7 +17,7 @@ function Start-Evps {
     return
   }
   $base = if ($env:EVPS_HOME) { $env:EVPS_HOME } else { Join-Path $env:LOCALAPPDATA 'evps' }
-  $pkg = if ($env:EVPS_PACKAGE) { $env:EVPS_PACKAGE } else { 'evps@latest' }
+  $pkg = if ($env:EVPS_PACKAGE) { $env:EVPS_PACKAGE } else { '@zhangbo9005/easy-vps@latest' }
 
   function Say([string]$text) { Write-Host $text }
   function Fail([string]$text) { Write-Host ''; Write-Host $text -ForegroundColor Red }
@@ -97,7 +97,7 @@ function Start-Evps {
   # 选一个能连上的 npm 源：国内镜像优先
   $registry = 'https://registry.npmmirror.com'
   try {
-    $req = [Net.WebRequest]::Create("$registry/evps"); $req.Timeout = 8000
+    $req = [Net.WebRequest]::Create("$registry/@zhangbo9005/easy-vps"); $req.Timeout = 8000
     $req.GetResponse().Close()
   } catch { $registry = 'https://registry.npmjs.org' }
 
