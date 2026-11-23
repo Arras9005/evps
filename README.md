@@ -104,7 +104,45 @@
 
 - 一台 VPS，系统建议 **Ubuntu 22.04**（Debian、CentOS 系也可以），1G 内存以上。
 - 它的 **IP 地址、SSH 端口（一般是 22）和 root 密码**，在服务商后台都能看到。
-- 电脑上装好 **Node.js**（20 或更新的版本）：到 [nodejs.org](https://nodejs.org/zh-cn) 下载「LTS 长期支持版」，Windows 选 `.msi`、Mac 选 `.pkg`，一路「下一步」装完。国内下载慢，可以到 [npmmirror 镜像](https://npmmirror.com/mirrors/node/) 下载同一个版本。
+- 电脑上装好 **Node.js**（20 或更新的版本）。已经装过的跳过下一节；不确定的，按下一节最后的「检查是否装好」看一下。
+
+### 安装 Node.js
+
+Node.js 是 evps 运行需要的环境，装一次就行，以后不用再管。
+
+#### Windows
+
+1. 打开 [Node.js 官网下载页](https://nodejs.org/zh-cn/download)，选 **LTS（长期支持版）**，下载 **Windows 安装程序（`.msi`）**。
+2. 双击下载好的 `.msi`，一路点「Next」：勾选同意许可协议，安装位置不用改。
+3. 遇到 **「Tools for Native Modules」**（自动安装编译工具）那一页，**不要勾选**，直接点「Next」。evps 用不到它，勾了会多装好几 GB 的东西。
+4. 点「Install」，弹出「是否允许更改」时点「是」，等它装完点「Finish」。
+
+#### Mac
+
+1. 打开 [Node.js 官网下载页](https://nodejs.org/zh-cn/download)，选 **LTS（长期支持版）**，下载 **macOS 安装程序（`.pkg`）**。
+2. 双击下载好的 `.pkg`，一路点「继续」「同意」「安装」，按提示输入电脑的开机密码，等它装完。
+
+> **Mac 系统比较旧（低于 macOS 13.5）**，新版装不上时，到下载页选 **Node.js 22** 的安装包。
+
+#### 国内下载慢
+
+官网下载太慢的话，到 [npmmirror 镜像](https://npmmirror.com/mirrors/node/) 下载同样的安装包：
+
+1. 点进版本号最大、开头是偶数的文件夹（偶数版本是长期支持版，比如 `v24.x.x/`）；
+2. Windows 下载文件名以 `-x64.msi` 结尾的（ARM 处理器的电脑下载 `-arm64.msi`），Mac 下载以 `.pkg` 结尾的；
+3. 下载后按上面的步骤安装，完全一样。
+
+#### 检查是否装好
+
+**先关掉所有黑窗口，再重新打开一个**（Windows 用「命令提示符」，Mac 用「终端」，打开方法见下一步），运行：
+
+```sh
+node -v
+```
+
+显示 `v20` 或更大的版本号（比如 `v24.11.1`），就装好了。
+
+> 会用命令行的，也可以用系统自带的包管理器安装：Windows 运行 `winget install OpenJS.NodeJS.LTS`，Mac 运行 `brew install node`。
 
 ### 第 1 步：运行一行命令
 
@@ -203,7 +241,10 @@ npm i -g @zhangbo9005/easy-vps
 ### 安装与连接
 
 **提示「'npx' 不是内部或外部命令」或「command not found: npx」？**
-Node.js 没装好，或者装好后没有重新打开黑窗口。装完 Node.js 后，关掉黑窗口再重新打开，运行 `node -v`，能看到版本号（v20 以上）就对了。
+Node.js 没装好，或者装好后没有重新打开黑窗口。按「[安装 Node.js](#安装-nodejs)」装好后，关掉黑窗口再重新打开，运行 `node -v`，能看到版本号（v20 以上）就对了。
+
+**`node -v` 显示的版本低于 v20？**
+电脑上装的是旧版 Node.js。按「[安装 Node.js](#安装-nodejs)」重新装一次 LTS 版，会直接覆盖旧版。
 
 **Windows 提示「因为在此系统上禁止运行脚本」？**
 你用的是 PowerShell，它默认不让运行脚本。改用「命令提示符」（`Win + R` 输入 `cmd`）就行，不用改系统设置。
