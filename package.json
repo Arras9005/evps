@@ -1,6 +1,6 @@
 {
   "name": "@zhangbo9005/easy-vps",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "在自己电脑的浏览器里，给自己的 VPS 一键安装 Geto 面板，并能查看、停止、重启、卸载。SSH 密码只在你自己的电脑上使用。",
   "keywords": [
     "vps",
