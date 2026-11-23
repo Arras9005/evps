@@ -6,6 +6,14 @@
 const PACKAGE = '@zhangbo9005/easy-vps';
 const REGISTRIES = ['https://registry.npmmirror.com', 'https://registry.npmjs.org'];
 
+/**
+ * evps 是怎么启动的，决定更新提示里给哪条命令：
+ * npx 运行时包在 npm 缓存的 _npx 目录里；其他情况（npm i -g、源码）按全局安装算。
+ */
+export function launchKind(root: string): 'npx' | 'global' {
+  return /[\\/]_npx[\\/]/.test(root) ? 'npx' : 'global';
+}
+
 /** a 比 b 新（只比较 x.y.z 三段数字；带 -beta 之类的预发布版本不算新版本） */
 export function isNewer(a: string, b: string): boolean {
   const parse = (v: string): number[] | null => (/^\d+\.\d+\.\d+$/.test(v) ? v.split('.').map(Number) : null);

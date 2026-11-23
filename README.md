@@ -37,7 +37,7 @@
 
 装好的是 **Geto 面板**，协议在面板网页里点几下就能创建，分享链接、二维码、订阅地址一应俱全。以后查看、停止、重启、卸载，也都在 evps 的网页里点按钮完成。
 
-> 全程不用敲一行命令，电脑上也不用提前装任何软件。Windows、Mac 通用。
+> 电脑上装好 Node.js，运行一行命令打开 evps，之后全程在网页里点。Windows、Mac 通用。
 
 ---
 
@@ -46,8 +46,8 @@
 ### 1. 零门槛：全程在网页里点
 
 - **不用命令行**：登录服务器、下载脚本、回答提问、整理结果，全部自动。
-- **不用装软件**：电脑上没有 Node.js 会自动下载官方便携版（核对官方校验值），只放在一个文件夹里，不装进系统、不要管理员权限。
-- **用完不留痕迹**：网页右上角选「清理本机文件并退出」，这个文件夹整个删掉。
+- **不用装别的软件**：电脑上有 Node.js 就够了，不用装 SSH 工具，也不用改任何配置。
+- **用完可清理**：网页右上角选「清理本机文件并退出」，删掉 evps 记住的服务器和登录密钥。
 
 ### 2. 装好就能用：可视化面板
 
@@ -90,7 +90,7 @@
 | | 自己用 SSH 跑一键脚本 | 交给网站代装 | **evps** |
 |---|---|---|---|
 | 要会命令行 | 要 | 不用 | **不用** |
-| 要在电脑上装软件 | 要装 SSH 工具 | 不用 | **不用**（自动准备，可一键清理） |
+| 要在电脑上装软件 | 要装 SSH 工具 | 不用 | **只要装好 Node.js** |
 | root 密码交给别人 | 不用 | **要** | **不用** |
 | 端口、账号密码 | 自己想，或者用默认的 | 看网站 | **自动随机生成** |
 | 装完的管理 | 再登录服务器敲命令 | 看网站 | **同一个网页里点按钮** |
@@ -104,24 +104,30 @@
 
 - 一台 VPS，系统建议 **Ubuntu 22.04**（Debian、CentOS 系也可以），1G 内存以上。
 - 它的 **IP 地址、SSH 端口（一般是 22）和 root 密码**，在服务商后台都能看到。
+- 电脑上装好 **Node.js**（20 或更新的版本）：到 [nodejs.org](https://nodejs.org/zh-cn) 下载「LTS 长期支持版」，Windows 选 `.msi`、Mac 选 `.pkg`，一路「下一步」装完。国内下载慢，可以到 [npmmirror 镜像](https://npmmirror.com/mirrors/node/) 下载同一个版本。
 
-### 第 1 步：粘贴一行命令
+### 第 1 步：运行一行命令
 
-**Windows 10 / 11**：按 `Win + R`，输入 `powershell`，回车。在蓝色窗口里粘贴下面这一行，回车：
+先打开黑窗口：
 
-```powershell
-[Net.ServicePointManager]::SecurityProtocol=3072;$s=$null;foreach($u in 'https://registry.npmmirror.com/@zhangbo9005/easy-vps/latest/files/w.ps1','https://cdn.jsdelivr.net/npm/@zhangbo9005/easy-vps@latest/w.ps1'){try{$s=[Text.Encoding]::UTF8.GetString((New-Object Net.WebClient).DownloadData($u));break}catch{}};if($s){iex $s}else{Write-Host '下载 evps 启动脚本失败，请检查网络后重试' -ForegroundColor Red}
-```
+- **Windows**：按 `Win + R`，输入 `cmd`，回车，打开「命令提示符」。
+- **Mac**：按 `Command + 空格`，输入「终端」，回车。
 
-**Mac**：按 `Command + 空格`，输入「终端」，回车。粘贴下面这一行，回车：
+粘贴下面这一行，回车：
 
 ```sh
-(curl -fsSL https://registry.npmmirror.com/@zhangbo9005/easy-vps/latest/files/m.sh || curl -fsSL https://cdn.jsdelivr.net/npm/@zhangbo9005/easy-vps@latest/m.sh || echo "echo '下载 evps 启动脚本失败，请检查网络后重试'") | sh
+npx -y @zhangbo9005/easy-vps@latest
 ```
 
-第一次运行会自动准备运行环境，要等一会儿，之后**浏览器会自动打开** evps 的网页。黑窗口要一直开着，用完再关。
+国内网络慢的话，换成这一行（从国内镜像下载）：
 
-> 已经装了 Node.js？也可以用 npm，见下面的「[用 npm 安装](#用-npm-安装)」。
+```sh
+npx -y --registry=https://registry.npmmirror.com @zhangbo9005/easy-vps@latest
+```
+
+稍等片刻，**浏览器会自动打开** evps 的网页。黑窗口要一直开着，用完再关。以后每次用都运行这同一行，拿到的总是最新版。
+
+> **Windows 请用「命令提示符」，不要用 PowerShell。** PowerShell 默认禁止运行脚本，会把 `npx` 拦下来，提示「因为在此系统上禁止运行脚本」。
 
 ### 第 2 步：点「开始安装」
 
@@ -154,19 +160,18 @@
 
 照提示到 VPS 服务商后台的「安全组 / 防火墙」放行这个 TCP 端口，再点「打开面板」。
 
-### 用 npm 安装
+### 装成固定命令（可选）
 
-电脑上已经有 Node.js 20 以上，可以直接用 npm：
+不想每次粘贴那一长行，可以装一次：
 
 ```sh
-npm i -g @zhangbo9005/easy-vps   # 装一次
-evps                             # 以后每次用，运行这一个词就行
+npm i -g @zhangbo9005/easy-vps
 ```
 
-不想装，也可以直接运行 `npx @zhangbo9005/easy-vps`。
+以后每次只要运行 `evps` 就行。
 
-- **Windows 提示「因为在此系统上禁止运行脚本」**：这是 PowerShell 默认不让运行 `.ps1`。不用改系统设置，在命令后面加 `.cmd` 就行：`evps.cmd`、`npx.cmd @zhangbo9005/easy-vps`；或者改用「命令提示符」（`Win + R` 输入 `cmd`）。上面那一行 PowerShell 命令不受这个限制。
-- **更新**：用 npm 装的不会自己更新。有新版本时网页顶部会提示，运行 `npm i -g @zhangbo9005/easy-vps@latest` 即可。一行命令启动的每次都是最新版。
+- **Mac 提示权限不足（`EACCES`）**：前面加 `sudo`，运行 `sudo npm i -g @zhangbo9005/easy-vps`，按提示输入电脑的开机密码。
+- **更新**：装成固定命令后不会自动更新。有新版本时，evps 网页顶部会提示，运行 `npm i -g @zhangbo9005/easy-vps@latest` 即可。
 
 ---
 
@@ -174,7 +179,7 @@ evps                             # 以后每次用，运行这一个词就行
 
 ### 再次打开
 
-再运行一次同一行命令（或 `evps`）：
+再运行一次第 1 步的那一行命令（装成固定命令的，运行 `evps`）：
 
 - **记住了的服务器**列在首页「我的服务器」里，自动查好状态（运行中 / 已停止 / 未安装），点一下就进来，不用输密码；
 - **没记住的**，点「添加服务器」重新填一下。已经装过的不会重装，直接显示登录信息。
@@ -187,7 +192,7 @@ evps                             # 以后每次用，运行这一个词就行
 
 ### 退出与清理
 
-点网页右上角的「···」→「退出 evps」，再关掉黑窗口。想把 evps 下载的东西全部删掉，选「清理本机文件并退出」。
+点网页右上角的「···」→「退出 evps」，再关掉黑窗口。想把 evps 在电脑上记下的东西全部删掉，选「清理本机文件并退出」。
 
 > **服务器上装好的面板不受影响**，退出、清理之后照常运行。
 
@@ -196,6 +201,12 @@ evps                             # 以后每次用，运行这一个词就行
 ## 五、常见问题
 
 ### 安装与连接
+
+**提示「'npx' 不是内部或外部命令」或「command not found: npx」？**
+Node.js 没装好，或者装好后没有重新打开黑窗口。装完 Node.js 后，关掉黑窗口再重新打开，运行 `node -v`，能看到版本号（v20 以上）就对了。
+
+**Windows 提示「因为在此系统上禁止运行脚本」？**
+你用的是 PowerShell，它默认不让运行脚本。改用「命令提示符」（`Win + R` 输入 `cmd`）就行，不用改系统设置。
 
 **提示「登录失败」？**
 先确认 IP、端口、用户名、密码没写错，密码区分大小写。有的服务商默认只允许密钥登录，需要在服务商后台开启密码登录，或者重置 root 密码。
@@ -223,7 +234,7 @@ evps                             # 以后每次用，运行这一个词就行
 ### 本机与数据
 
 **会在我的电脑上留下什么？**
-只有一个文件夹：Windows 是 `%LOCALAPPDATA%\evps`，Mac 是 `~/.evps`。里面是便携版 Node.js 和记住的服务器（不含密码）。在网页右上角菜单里选「清理本机文件并退出」就全部删掉。
+只有一个文件夹：Windows 是 `%LOCALAPPDATA%\evps`，Mac 是 `~/.evps`，里面是记住的服务器和 evps 专用的登录密钥，不含任何密码。在网页右上角菜单里选「清理本机文件并退出」就全部删掉。evps 程序本身放在 npm 的缓存里，和其他 npm 包一样由 npm 管理。
 
 **「记住这台服务器」在服务器上做了什么？**
 在服务器的 `~/.ssh/authorized_keys` 里加一把 evps 专用的登录公钥（末尾是 `evps`）。卸载面板时会自动删掉；不想用了，也可以手动删掉那一行。
@@ -241,8 +252,7 @@ evps                             # 以后每次用，运行这一个词就行
 
 - evps 在你的电脑上只监听 `127.0.0.1`，网页地址里带一次性的随机令牌，别的网站、别的电脑都用不了它。
 - 发布的 npm 包**没有任何依赖**：SSH 库（ssh2）在发布时就打包进去了，安装时只下载这一个包，不会在你的电脑上运行任何安装脚本或编译程序。打包进去的开源代码的许可证在 `dist/server/THIRD-PARTY-LICENSES.txt`。
-- 便携 Node.js 下载后核对官方公布的 SHA256，对不上就删除，不会执行。
-- 用 npm 装的 evps 启动时会问一下 npm 有没有新版本（一个公开的 GET 请求，不带任何信息）。不想让它问，设环境变量 `EVPS_NO_UPDATE_CHECK=1`。
+- evps 启动时会问一下 npm 有没有新版本（一个公开的 GET 请求，不带任何信息）。不想让它问，设环境变量 `EVPS_NO_UPDATE_CHECK=1`。
 
 ### 在服务器上
 
@@ -303,7 +313,6 @@ web/        网页（Vue 3）
 dev/        打包脚本、假 SSH 服务器、假 VPS、浏览器走查
 test/       测试
 docs/       README 配图
-w.ps1 m.sh  Windows / Mac 一行命令用的启动脚本
 promo.json  网页里「VPS 推荐」页的内容
 ```
 

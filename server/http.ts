@@ -10,6 +10,7 @@ import { PanelError } from './ssh.ts';
 import type { Jobs, JobRequest } from './jobs.ts';
 import type { Promo } from './promo.ts';
 import type { Store } from './store.ts';
+import { launchKind } from './update.ts';
 
 export interface HttpOptions {
   token: string;
@@ -172,7 +173,7 @@ export function createHttpServer(opts: HttpOptions): Server {
       return;
     }
     if (method === 'GET' && path === '/api/update') {
-      send(res, 200, { latest: (await opts.update) ?? null, current: opts.version });
+      send(res, 200, { latest: (await opts.update) ?? null, current: opts.version, via: launchKind(opts.webDir) });
       return;
     }
     if (method === 'GET' && path === '/api/servers') {

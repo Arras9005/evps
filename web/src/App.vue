@@ -36,6 +36,8 @@ const quitDone = ref<string | null>(null);
 const installing = ref(false);
 /** npm 上有新版本（只有用 npm i -g 装的才会查） */
 const update = ref<string | null>(null);
+/** 怎么启动的：用 npx 的和用 npm i -g 装的，更新命令不一样 */
+const updateVia = ref<'npx' | 'global'>('global');
 let ping: ReturnType<typeof setInterval> | undefined;
 
 const freshDraft = (): Draft => ({ host: '', port: '22', user: 'root', password: '', remember: true, error: null });
@@ -63,7 +65,11 @@ onMounted(async () => {
   }
   if (list.ok) saved.value = list.data.servers;
   info.value = r.data;
-  void api<{ latest: string | null }>('/api/update').then((u) => { if (u.ok) update.value = u.data.latest; });
+  void api<{ latest: string | null; via?: 'npx' | 'global' }>('/api/update').then((u) => {
+    if (!u.ok) return;
+    update.value = u.data.latest;
+    updateVia.value = u.data.via ?? 'global';
+  });
   // 告诉 evps 网页还开着；网页关掉一段时间后它会自己退出
   ping = setInterval(() => { void api('/api/ping', { method: 'POST', body: {} }); }, 60_000);
 });
@@ -190,7 +196,9 @@ const backText = computed(() => (route.value.name === 'server' ? '我的服务�
 
     <Transition name="fade">
     <div v-if="update && !quitDone" class="update-bar" data-test="update">
-      <b>有新版本 {{ update }}</b>（你现在用的是 {{ info?.version }}）。更新方法：关掉 evps，在黑窗口运行 <code>npm i -g @zhangbo9005/easy-vps@latest</code>，再运行 <code>evps</code>。
+      <b>有新版本 {{ update }}</b>（你现在用的是 {{ info?.version }}）。更新方法：关掉 evps，在黑窗口运行
+      <code v-if="updateVia === 'npx'">npx -y @zhangbo9005/easy-vps@latest</code>
+      <template v-else><code>npm i -g @zhangbo9005/easy-vps@latest</code>，再运行 <code>evps</code></template>。
     </div>
     </Transition>
 

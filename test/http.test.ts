@@ -8,7 +8,7 @@ import { after, before, describe, it } from 'node:test';
 import { createHttpServer } from '../server/http.ts';
 import { Jobs } from '../server/jobs.ts';
 import { Store } from '../server/store.ts';
-import { isNewer } from '../server/update.ts';
+import { isNewer, launchKind } from '../server/update.ts';
 
 describe('新版本比较', () => {
   it('数字逐段比', () => {
@@ -16,6 +16,11 @@ describe('新版本比较', () => {
     assert.equal(isNewer('0.10.0', '0.9.0'), true);
     assert.equal(isNewer('1.0.0', '1.0.0'), false);
     assert.equal(isNewer('0.1.0', '0.2.0'), false);
+  });
+  it('用 npx 启动的认得出来（Windows、Mac 的缓存路径都认）', () => {
+    assert.equal(launchKind('C:\\Users\\a\\AppData\\Local\\npm-cache\\_npx\\1a2b\\node_modules\\@zhangbo9005\\easy-vps\\dist\\web'), 'npx');
+    assert.equal(launchKind('/Users/a/.npm/_npx/1a2b/node_modules/@zhangbo9005/easy-vps/dist/web'), 'npx');
+    assert.equal(launchKind('/usr/local/lib/node_modules/@zhangbo9005/easy-vps/dist/web'), 'global');
   });
   it('预发布版本、乱写的版本号不算新版本', () => {
     assert.equal(isNewer('0.3.0-beta.1', '0.2.0'), false);
@@ -67,7 +72,7 @@ describe('本机网页服务', () => {
   it('接口要令牌；新版本号从这里拿', async () => {
     assert.equal((await fetch(base + '/api/update')).status, 401);
     const r = await fetch(base + '/api/update', { headers: { authorization: `Bearer ${token}` } });
-    assert.deepEqual(await r.json(), { latest: '0.3.0', current: '0.2.0' });
+    assert.deepEqual(await r.json(), { latest: '0.3.0', current: '0.2.0', via: 'global' });
   });
 
   it('别的 Host（DNS 重绑定）一律拒绝', async () => {
